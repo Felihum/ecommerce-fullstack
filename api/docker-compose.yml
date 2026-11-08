@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # Serviço do PostgreSQL
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecommerce-db
+    restart: always
+    environment:
+      POSTGRES_USER: ecommerce-api
+      POSTGRES_PASSWORD: ecommerce-api
+      POSTGRES_DB: ecommerce-api
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecommerce-api -d ecommerce-api"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # Serviço da API (NestJS)
+  # ==========================================
+  ecommerce-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-api
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      # No NestJS/TypeORM/Prisma, use o nome do serviço do docker (postgres) no host
+      - DATABASE_URL=postgresql://ecommerce-api:ecommerce-api@postgres:5432/ecommerce-api?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
