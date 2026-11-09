@@ -18,6 +18,12 @@
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@infrastructure/*": ["./src/infrastructure/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@packages/*": ["./src/packages/*"],
+      "@shared/*": ["./src/shared/*"]
+    }
   }
 }

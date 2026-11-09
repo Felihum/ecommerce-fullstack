@@ -9,15 +9,15 @@ services:
     container_name: ecommerce-db
     restart: always
     environment:
-      POSTGRES_USER: ecommerce-api
-      POSTGRES_PASSWORD: ecommerce-api
-      POSTGRES_DB: ecommerce-api
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ecommerce-api -d ecommerce-api"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,9 +34,9 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
       # No NestJS/TypeORM/Prisma, use o nome do serviço do docker (postgres) no host
-      - DATABASE_URL=postgresql://ecommerce-api:ecommerce-api@postgres:5432/ecommerce-api?schema=public
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy
