@@ -7,6 +7,7 @@ import { TokenProviderInterface } from "../contracts/token.provider.interface";
 import { SessionRepositoryInterface } from "../contracts/session.repository.interface";
 import { Session } from "../models/session.entity";
 import { TokenHasherInterface } from "../contracts/token.hasher.interfacer";
+import { UnitOfWorkInterface } from "@infrastructure/database/contracts/unit-of-work.interface";
 
 interface LoginInput{
     email: string,
@@ -24,7 +25,8 @@ export class LoginUseCase{
         private readonly sessionRepository: SessionRepositoryInterface,
         private readonly passwordHasher: PasswordHasherInterface,
         private readonly tokenProvider: TokenProviderInterface,
-        private readonly tokenHasher: TokenHasherInterface
+        private readonly tokenHasher: TokenHasherInterface,
+        private readonly unitOfWork: UnitOfWorkInterface
     ){}
 
     public async execute(input: LoginInput): Promise<LoginOutput>{
@@ -38,29 +40,31 @@ export class LoginUseCase{
             throw new IncorrectCredentialsException();
         }
 
-        const session = Session.create(user.id);
-        const storedSession = await this.sessionRepository.insert(session);
+        return this.unitOfWork.execute(async (context) => {
+            const session = Session.create(user.id.toString());
+            const storedSession = await this.sessionRepository.insert(session, context);
 
-        const accessToken = await this.tokenProvider.generateAccessToken({ 
-            sub: user.id.toString(), 
-            sessionId: storedSession.id.toString(),
-        });
+            const accessToken = await this.tokenProvider.generateAccessToken({ 
+                sub: user.id.toString(), 
+                sessionId: storedSession.id.toString(),
+            });
 
-        const refreshToken = await this.tokenProvider.generateRefreshToken({ 
-            sub: user.id.toString(), 
-            sessionId: storedSession.id.toString(),
-        });
+            const refreshToken = await this.tokenProvider.generateRefreshToken({ 
+                sub: user.id.toString(), 
+                sessionId: storedSession.id.toString(),
+            });
 
-        storedSession.update(
-            this.tokenHasher.encrypt(refreshToken.value), 
-            new Date(Date.now() + refreshToken.duration)
-        );
+            storedSession.update(
+                this.tokenHasher.encrypt(refreshToken.value), 
+                new Date(Date.now() + refreshToken.duration),
+            );
 
-        await this.sessionRepository.update(storedSession);
+            await this.sessionRepository.update(storedSession, context);
 
-        return {
-            accessToken: accessToken.value,
-            refreshToken: refreshToken.value
-        }
+            return {
+                accessToken: accessToken.value,
+                refreshToken: refreshToken.value
+            }
+        })
     }
 }

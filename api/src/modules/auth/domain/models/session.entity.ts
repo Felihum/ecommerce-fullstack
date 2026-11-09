@@ -8,13 +8,13 @@ export class Session {
         public expiresAt: Date | null,
         public readonly createdAt: Date = new Date(),
         public revokedAt: Date | null,
-        public lastActivityAt: Date
+        public updatedAt: Date
     ){}
 
-    static create(userId: ULID){
+    static create(userId: string){
         return new Session(
             ULID.create(),
-            userId,
+            ULID.from(userId),
             null,
             null,
             new Date(),
@@ -29,6 +29,6 @@ export class Session {
     ){
         this.refreshTokenHash = refreshTokenHash ?? null;
         this.expiresAt = expiresAt ?? null;
-        this.lastActivityAt = new Date();
+        this.updatedAt = new Date();
     }
 }
