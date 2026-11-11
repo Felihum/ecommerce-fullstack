@@ -9,7 +9,7 @@ import path from "path";
 export const AppDataSource = new DataSource({
     type: "postgres",
     host: EnvSchema.DATABASE_HOST,
-    port: EnvSchema.POSTGRES_PORT as unknown as number,
+    port: Number(EnvSchema.POSTGRES_PORT),
     username: EnvSchema.POSTGRES_USER,
     password: EnvSchema.POSTGRES_PASSWORD,
     database: EnvSchema.POSTGRES_DB,

@@ -2,4 +2,5 @@ packages:
   - .
 
 allowBuilds:
-  '@parcel/watcher': true
+  '@parcel/watcher': true  
+  'argon2': true

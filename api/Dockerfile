@@ -5,6 +5,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    nodejs-dev
+
 RUN corepack enable && corepack prepare pnpm@12.18.0 --activate
 
 # Copia os arquivos de configuração
@@ -26,6 +32,12 @@ RUN pnpm build
 FROM node:20-alpine AS runner
 
 WORKDIR /usr/src/app
+
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    nodejs-dev
 
 ENV NODE_ENV=production
 

@@ -9,12 +9,12 @@ import { Session } from "../models/session.entity";
 import { TokenHasherInterface } from "../contracts/token.hasher.interfacer";
 import { UnitOfWorkInterface } from "@infrastructure/database/contracts/unit-of-work.interface";
 
-interface LoginInput{
+export interface LoginInput{
     email: string,
     password: string
 }
 
-interface LoginOutput{
+export interface LoginOutput{
     accessToken: string,
     refreshToken: string
 }
@@ -30,13 +30,13 @@ export class LoginUseCase{
     ){}
 
     public async execute(input: LoginInput): Promise<LoginOutput>{
-        const user: User = await this.userRepository.findByEmail(Email.create(input.email).toString());
+        const user = await this.userRepository.findByEmail(Email.create(input.email).toString());
 
         if (user == null){
             throw new IncorrectCredentialsException();
         }
 
-        if(!this.passwordHasher.compare(input.password, user.password)){
+        if(await !this.passwordHasher.compare(input.password, user.password)){
             throw new IncorrectCredentialsException();
         }
 

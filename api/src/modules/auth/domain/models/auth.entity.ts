@@ -40,21 +40,21 @@ export class User {
     ){}
 
     static create(
-        cpf: CPF,
+        cpf: string,
         name: string,
-        email: Email,
+        email: string,
         password: string,
         birthday: Date,
-        addressId: ULID
+        addressId: string
     ){
         return new User(
             ULID.create(),
-            cpf,
+            CPF.create(cpf),
             name,
-            email,
+            Email.create(email),
             password,
             birthday,
-            addressId
+            ULID.from(addressId)
         );
     }
 }
