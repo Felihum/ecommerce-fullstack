@@ -9,26 +9,44 @@ import { Injectable } from "@nestjs/common";
 
 @Entity("sessions")
 export class SessionEntity {
-    @PrimaryColumn()
+    @PrimaryColumn({
+        type: "varchar",
+        length: 26,
+    })
     id: string;
 
-    @ManyToOne(() => UserEntity, { nullable: false })
+    @ManyToOne(() => UserEntity, {
+        nullable: false,
+    })
     @JoinColumn({ name: "user_id" })
     user: UserEntity;
 
-    @Column({ nullable: true })
+    @Column({
+        type: "varchar",
+        nullable: true,
+    })
     refreshTokenHash: string | null;
 
-    @Column({ nullable: true })
+    @Column({
+        type: "timestamp",
+        nullable: true,
+    })
     expiresAt: Date | null;
 
-    @Column({ nullable: true })
+    @Column({
+        type: "timestamp",
+        nullable: true,
+    })
     revokedAt: Date | null;
 
-    @Column()
+    @Column({
+        type: "timestamp",
+    })
     createdAt: Date;
 
-    @Column()
+    @Column({
+        type: "timestamp",
+    })
     updatedAt: Date;
 }
 

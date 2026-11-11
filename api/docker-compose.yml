@@ -23,6 +23,26 @@ services:
       retries: 5
 
   # ==========================================
+  # Serviço responsável pelas migrations
+  # ==========================================
+  ecommerce-migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    container_name: ecommerce-migrations
+    environment:
+      DATABASE_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    command: ["pnpm", "migration:run"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  # ==========================================
   # Serviço da API (NestJS)
   # ==========================================
   ecommerce-api:
@@ -35,11 +55,12 @@ services:
       - "3001:3001"
     environment:
       - NODE_ENV=${NODE_ENV}
-      # No NestJS/TypeORM/Prisma, use o nome do serviço do docker (postgres) no host
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy
+      ecommerce-migrations:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:
