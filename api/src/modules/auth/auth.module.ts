@@ -18,6 +18,7 @@ import { TypeOrmUnitOfWork } from "@infrastructure/database/typeorm/typeorm-unit
 import { Sha256Hasher } from "@infrastructure/cryptography/sha256/sha256.hasher";
 import { JwtTokenProvider } from "@infrastructure/authentication/jwt/jwt.provider";
 import { Argon2Hasher } from "@infrastructure/cryptography/argon2/argon2.hasher";
+import { RegisterUseCase } from "./domain/use-cases/register.use-case";
 
 export const AUTH_TOKENS = {
   USER_REPOSITORY: Symbol("USER_REPOSITORY"),
@@ -117,10 +118,25 @@ export const AUTH_TOKENS = {
         AUTH_TOKENS.TOKEN_HASHER,
       ],
     },
+    {
+      provide: RegisterUseCase,
+      useFactory: (
+        userRepository: UserRepositoryInterface,
+        passwordHasher: PasswordHasherInterface,
+      ) => new RegisterUseCase(
+        userRepository,
+        passwordHasher,
+      ),
+      inject: [
+        AUTH_TOKENS.USER_REPOSITORY,
+        AUTH_TOKENS.PASSWORD_HASHER,
+      ],
+    },
   ],
 
   exports: [
     LoginUseCase,
+    RegisterUseCase
   ],
 })
 export class AuthModule {}

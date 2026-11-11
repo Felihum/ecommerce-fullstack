@@ -25,14 +25,11 @@ export class UserEntity {
   @Column({ type: "varchar", length: 255 })
   password: string;
 
-  @Column({ type: "date" })
-  birthday: Date;
-
   @ManyToOne(() => AddressEntity, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({ name: "address_id" })
-  address: AddressEntity;
+  address: AddressEntity | null;
 }
 
 
@@ -111,8 +108,7 @@ export class UserTypeormRepository implements UserRepositoryInterface {
       entity.name,
       entity.email,
       entity.password,
-      entity.birthday,
-      entity.address.id,
+      entity.address ? entity.address.id : undefined,
     )
   }
 
@@ -124,7 +120,6 @@ export class UserTypeormRepository implements UserRepositoryInterface {
     entity.name = user.name;
     entity.email = user.email.toString();
     entity.password = user.password;
-    entity.birthday = user.birthday;
 
     // Adicione aqui a conversão de Address para AddressEntity
 

@@ -2,7 +2,6 @@ import { Email } from "@shared/domain/value-objects/email.vo";
 import { UserRepositoryInterface } from "../contracts/user.repository.interface";
 import { IncorrectCredentialsException } from "../exceptions/incorrect-credentials.exception";
 import { PasswordHasherInterface } from "../contracts/password.hasher.interface";
-import { User } from "../models/auth.entity";
 import { TokenProviderInterface } from "../contracts/token.provider.interface";
 import { SessionRepositoryInterface } from "../contracts/session.repository.interface";
 import { Session } from "../models/session.entity";

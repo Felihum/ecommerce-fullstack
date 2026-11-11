@@ -35,8 +35,7 @@ export class User {
         public name: string,
         public email: Email,
         public password: string,
-        public birthday: Date,
-        public addressId: ULID
+        public addressId: ULID | null
     ){}
 
     static create(
@@ -44,8 +43,7 @@ export class User {
         name: string,
         email: string,
         password: string,
-        birthday: Date,
-        addressId: string
+        addressId?: string
     ){
         return new User(
             ULID.create(),
@@ -53,8 +51,7 @@ export class User {
             name,
             Email.create(email),
             password,
-            birthday,
-            ULID.from(addressId)
+            addressId ? ULID.from(addressId): null
         );
     }
 }
