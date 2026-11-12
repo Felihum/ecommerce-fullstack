@@ -35,12 +35,20 @@ export class LoginUseCase{
             throw new IncorrectCredentialsException();
         }
 
-        if(await !this.passwordHasher.compare(input.password, user.password)){
+        const passwordMatch = await this.passwordHasher.compare(input.password, user.password)
+
+        if(!passwordMatch){
             throw new IncorrectCredentialsException();
         }
 
         return this.unitOfWork.execute(async (context) => {
             const session = Session.create(user.id.toString());
+
+            console.log({
+                sessionId: session.id.toString(),
+                userId: session.userId.toString(),
+            });
+
             const storedSession = await this.sessionRepository.insert(session, context);
 
             const accessToken = await this.tokenProvider.generateAccessToken({ 

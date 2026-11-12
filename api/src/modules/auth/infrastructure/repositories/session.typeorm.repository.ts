@@ -77,7 +77,7 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
             id: session.id.toString(),
             user: {
                 id: session.userId.toString(),
-            } as any,
+            } as UserEntity,
             refreshTokenHash: session.refreshTokenHash,
             expiresAt: session.expiresAt,
             revokedAt: session.revokedAt,

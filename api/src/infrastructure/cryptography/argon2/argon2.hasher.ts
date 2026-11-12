@@ -1,7 +1,5 @@
-
 import { PasswordHasherInterface } from "@modules/auth/domain/contracts/password.hasher.interface";
 import * as argon2 from "argon2";
-
 
 export class Argon2Hasher implements PasswordHasherInterface {
   async encrypt(password: string): Promise<string> {

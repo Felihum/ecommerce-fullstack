@@ -3,8 +3,17 @@ import { SessionEntity } from "@modules/auth/infrastructure/repositories/session
 import { UserEntity } from "@modules/auth/infrastructure/repositories/user.typeorm.repository";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { EnvSchema } from "../../../config/env.schema";
 import path from "path";
+import { EnvSchema } from "@config/env.schema";
+
+console.log({
+    host: EnvSchema.DATABASE_HOST,
+    port: EnvSchema.POSTGRES_PORT,
+    username: EnvSchema.POSTGRES_USER,
+    password: EnvSchema.POSTGRES_PASSWORD,
+    database: EnvSchema.POSTGRES_DB,
+    passwordLength: EnvSchema.POSTGRES_PASSWORD?.length,
+});
 
 export const AppDataSource = new DataSource({
     type: "postgres",

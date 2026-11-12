@@ -103,13 +103,17 @@ export class UserTypeormRepository implements UserRepositoryInterface {
   }
 
   private toDomain(entity: UserEntity): User {
-    return User.create(
+    const domainUser = User.create(
       entity.cpf,
       entity.name,
       entity.email,
       entity.password,
       entity.address ? entity.address.id : undefined,
     )
+
+    domainUser.id = ULID.from(entity.id)
+
+    return domainUser
   }
 
   private toPersistence(user: User): UserEntity {

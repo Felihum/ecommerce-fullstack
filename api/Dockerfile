@@ -1,15 +1,15 @@
 # ==========================================
 # Estágio 1: Instalação e Compilação
 # ==========================================
-FROM node:20-alpine AS builder
+FROM node:20-bookworm-slim AS builder
 
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    nodejs-dev
+    && rm -rf /var/lib/apt/lists/*
 
 RUN corepack enable && corepack prepare pnpm@12.18.0 --activate
 
@@ -29,15 +29,15 @@ RUN pnpm build
 # ==========================================
 # Estágio 2: Produção
 # ==========================================
-FROM node:20-alpine AS runner
+FROM node:20-bookworm-slim AS runner
 
 WORKDIR /usr/src/app
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
-    nodejs-dev
+    && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 

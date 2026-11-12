@@ -30,7 +30,7 @@ export class Address {
 
 export class User {
     private constructor(
-        public readonly id: ULID,
+        public id: ULID,
         public cpf: CPF,
         public name: string,
         public email: Email,
