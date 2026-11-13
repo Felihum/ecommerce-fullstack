@@ -5,6 +5,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { ULID } from "@shared/domain/value-objects/ulid.vo";
 import { UserRepositoryInterface } from "@modules/auth/domain/contracts/user.repository.interface";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CPF } from "@shared/domain/value-objects/cpf.vo";
+import { Email } from "@shared/domain/value-objects/email.vo";
 
 @Entity("users")
 @Unique(["cpf"])
@@ -103,15 +105,14 @@ export class UserTypeormRepository implements UserRepositoryInterface {
   }
 
   private toDomain(entity: UserEntity): User {
-    const domainUser = User.create(
-      entity.cpf,
+    const domainUser = new User(
+      CPF.create(entity.cpf),
       entity.name,
-      entity.email,
+      Email.create(entity.email),
       entity.password,
-      entity.address ? entity.address.id : undefined,
+      ULID.from(entity.id),
+      entity.address ? ULID.from(entity.address.id) : undefined,
     )
-
-    domainUser.id = ULID.from(entity.id)
 
     return domainUser
   }

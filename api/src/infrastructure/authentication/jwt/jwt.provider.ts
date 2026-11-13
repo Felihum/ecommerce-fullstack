@@ -26,11 +26,11 @@ export class JwtTokenProvider implements TokenProviderInterface {
     payload: TokenPayload,
   ): Promise<TokenResponse> {
     const value = await new SignJWT({
-      sessionId: payload.sessionId,
+      userId: payload.userId,
       tokenType: "access",
     })
       .setProtectedHeader({ alg: "HS256" })
-      .setSubject(payload.sub)
+      .setSubject(payload.userId)
       .setIssuer(this.issuer)
       .setAudience(this.audience)
       .setIssuedAt()
@@ -55,11 +55,11 @@ export class JwtTokenProvider implements TokenProviderInterface {
     payload: TokenPayload,
   ): Promise<TokenResponse> {
     const value = await new SignJWT({
-      sessionId: payload.sessionId,
+      userId: payload.userId,
       tokenType: "refresh",
     })
       .setProtectedHeader({ alg: "HS256" })
-      .setSubject(payload.sub)
+      .setSubject(payload.userId)
       .setIssuer(this.issuer)
       .setAudience(this.audience)
       .setIssuedAt()
@@ -93,15 +93,13 @@ export class JwtTokenProvider implements TokenProviderInterface {
 
     if (
       typeof payload.sub !== "string" ||
-      typeof payload.sessionId !== "string" ||
       payload.tokenType !== expectedType
     ) {
       throw new Error("Invalid token payload.");
     }
 
     return {
-      sub: payload.sub,
-      sessionId: payload.sessionId,
+      userId: payload.sub,
     };
   }
 }

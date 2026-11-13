@@ -4,54 +4,48 @@ import { Email } from "@shared/domain/value-objects/email.vo";
 import { ULID } from "@shared/domain/value-objects/ulid.vo";
 
 export class Address {
-    private constructor(
-        public readonly id: ULID,
-        public street: string,
-        public number: number,
-        public complement: string,
-        public cep: CEP
-    ){}
+    public readonly id: ULID
+    public street: string
+    public number: number
+    public complement: string
+    public cep: CEP
 
-    static create(
+    constructor(
         street: string,
         number: number,
         complement: string,
         cep: CEP,
+        id?: ULID,
     ){
-        return new Address(
-            ULID.create(), 
-            street, 
-            number, 
-            complement, 
-            cep
-        );
+        this.id = id ?? ULID.create()
+        this.street = street
+        this.number = number
+        this.complement = complement
+        this.cep = cep
     }
 }
 
 export class User {
-    private constructor(
-        public id: ULID,
-        public cpf: CPF,
-        public name: string,
-        public email: Email,
-        public password: string,
-        public addressId: ULID | null
-    ){}
+    public readonly id: ULID
+    public cpf: CPF
+    public name: string
+    public email: Email
+    public password: string
+    public addressId: ULID | null
 
-    static create(
-        cpf: string,
+    constructor(
+        cpf: CPF,
         name: string,
-        email: string,
+        email: Email,
         password: string,
-        addressId?: string
+        id?: ULID,
+        addressId?: ULID,
     ){
-        return new User(
-            ULID.create(),
-            CPF.create(cpf),
-            name,
-            Email.create(email),
-            password,
-            addressId ? ULID.from(addressId): null
-        );
+        this.id = id ?? ULID.create()
+        this.cpf = cpf
+        this.name = name
+        this.email = email
+        this.password = password
+        this.addressId = addressId ?? null
     }
 }

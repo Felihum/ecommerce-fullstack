@@ -1,34 +1,29 @@
 import { ULID } from "@shared/domain/value-objects/ulid.vo";
 
 export class Session {
-    private constructor (
-        public readonly id: ULID,
-        public readonly userId: ULID,
-        public refreshTokenHash: string | null,
-        public expiresAt: Date | null,
-        public readonly createdAt: Date = new Date(),
-        public revokedAt: Date | null,
-        public updatedAt: Date
-    ){}
+    public readonly id: ULID
+    public readonly userId: ULID
+    public refreshTokenHash: string
+    public expiresAt: Date
+    public createdAt: Date
+    public revokedAt: Date | null
+    public updatedAt: Date
 
-    static create(userId: string){
-        return new Session(
-            ULID.create(),
-            ULID.from(userId),
-            null,
-            null,
-            new Date(),
-            null,
-            new Date()
-        )
-    }
-
-    public update(
-        refreshTokenHash: string | undefined,
-        expiresAt: Date | undefined
+    constructor (
+        userId: ULID,
+        refreshTokenHash: string,
+        expiresAt: Date,
+        id?: ULID,
+        revokedAt?: Date,
+        createdAt?: Date,
+        updatedAt?: Date,
     ){
-        this.refreshTokenHash = refreshTokenHash ?? null;
-        this.expiresAt = expiresAt ?? null;
-        this.updatedAt = new Date();
+        this.id = id ?? ULID.create()
+        this.userId = userId
+        this.refreshTokenHash = refreshTokenHash
+        this.expiresAt = expiresAt
+        this.revokedAt = revokedAt ?? null
+        this.createdAt = createdAt ?? new Date()
+        this.updatedAt = updatedAt ?? new Date()
     }
 }

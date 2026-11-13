@@ -32,10 +32,10 @@ export class RegisterUseCase{
 
         const passwordHash = await this.passwordHasher.encrypt(password.toString())
 
-        return await this.userRepository.insert(User.create(
-            cpf.toString(),
+        return await this.userRepository.insert(new User(
+            cpf,
             input.name,
-            email.toString(),
+            email,
             passwordHash
         ))
     }

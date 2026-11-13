@@ -1,6 +1,5 @@
 export interface TokenPayload{
-    sub: string,
-    sessionId: string,
+    userId: string,
 }
 
 export interface TokenResponse{

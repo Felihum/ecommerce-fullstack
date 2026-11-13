@@ -41,37 +41,20 @@ export class LoginUseCase{
             throw new IncorrectCredentialsException();
         }
 
-        return this.unitOfWork.execute(async (context) => {
-            const session = Session.create(user.id.toString());
+        const accessToken = await this.tokenProvider.generateAccessToken({ userId: user.id.toString() });
+        const refreshToken = await this.tokenProvider.generateRefreshToken({ userId: user.id.toString() });
 
-            console.log({
-                sessionId: session.id.toString(),
-                userId: session.userId.toString(),
-            });
+        const session = new Session(
+            user.id, 
+            this.tokenHasher.encrypt(refreshToken.value), 
+            new Date(Date.now() + refreshToken.duration)
+        );
 
-            const storedSession = await this.sessionRepository.insert(session, context);
+        await this.sessionRepository.patch(session);
 
-            const accessToken = await this.tokenProvider.generateAccessToken({ 
-                sub: user.id.toString(), 
-                sessionId: storedSession.id.toString(),
-            });
-
-            const refreshToken = await this.tokenProvider.generateRefreshToken({ 
-                sub: user.id.toString(), 
-                sessionId: storedSession.id.toString(),
-            });
-
-            storedSession.update(
-                this.tokenHasher.encrypt(refreshToken.value), 
-                new Date(Date.now() + refreshToken.duration),
-            );
-
-            await this.sessionRepository.update(storedSession, context);
-
-            return {
-                accessToken: accessToken.value,
-                refreshToken: refreshToken.value
-            }
-        })
+        return {
+            accessToken: accessToken.value,
+            refreshToken: refreshToken.value
+        }
     }
 }
