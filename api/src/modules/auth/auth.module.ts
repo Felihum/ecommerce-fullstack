@@ -21,6 +21,7 @@ import { Argon2Hasher } from "@infrastructure/cryptography/argon2/argon2.hasher"
 import { RegisterUseCase } from "./domain/use-cases/register.use-case";
 import { AuthenticateAccessTokenUseCase } from "./domain/use-cases/authenticate-access-token.use-case";
 import { AuthenticationGuard } from "@infrastructure/authentication/guards/authentication.guard";
+import { RefreshTokenUseCase } from "./domain/use-cases/refresh-token.use-case";
 
 export const AUTH_TOKENS = {
   USER_REPOSITORY: Symbol("USER_REPOSITORY"),
@@ -147,13 +148,34 @@ export const AUTH_TOKENS = {
         AUTH_TOKENS.SESSION_REPOSITORY
       ]
     },
+    {
+      provide: RefreshTokenUseCase,
+      useFactory: (
+        sessionRepository: SessionRepositoryInterface,
+        tokenProvider: TokenProviderInterface,
+        tokenHasher: TokenHasherInterface,
+        unitOfWork: UnitOfWorkInterface
+      ) => new RefreshTokenUseCase(
+        sessionRepository,
+        tokenProvider,
+        tokenHasher,
+        unitOfWork
+      ),
+      inject: [
+        AUTH_TOKENS.SESSION_REPOSITORY,
+        AUTH_TOKENS.TOKEN_PROVIDER,
+        AUTH_TOKENS.TOKEN_HASHER,
+        AUTH_TOKENS.UNIT_OF_WORK
+      ]
+    },
     AuthenticationGuard
   ],
 
   exports: [
     LoginUseCase,
     RegisterUseCase,
-    AuthenticateAccessTokenUseCase
+    AuthenticateAccessTokenUseCase,
+    RefreshTokenUseCase
   ],
 })
 export class AuthModule {}
