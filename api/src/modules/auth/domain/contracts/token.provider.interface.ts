@@ -7,6 +7,9 @@ export interface TokenResponse{
     duration: number
 }
 
+export const ACCESS_TOKEN_EXPIRATION_MS = 900;
+export const REFRESH_TOKEN_EXPIRATION_MS = 604800;
+
 export interface TokenProviderInterface{
     generateAccessToken(payload: TokenPayload): Promise<TokenResponse>;
     verifyAccessToken(token: string): Promise<TokenPayload>;

@@ -121,6 +121,22 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
         return entity ? this.toDomain(entity) : null;
     }
 
+    async findByUserIdForUpdate(
+        userId: ULID,
+        context: TypeOrmTransactionContext,
+    ): Promise<Session | null> {
+        const entity = await context.manager
+            .getRepository(SessionEntity)
+            .createQueryBuilder('session')
+            .setLock('pessimistic_write')
+            .where('session.userId = :userId', {
+                userId: userId.toString(),
+            })
+            .getOne();
+
+        return entity ? this.toDomain(entity) : null;
+    }
+
     async findByRefreshToken(token: string): Promise<Session | null> {
         const entity = await this.repository.findOne({
             where: {
