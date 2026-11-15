@@ -6,6 +6,7 @@ import { ULID } from "@shared/domain/value-objects/ulid.vo";
 import { Session } from "@modules/auth/domain/models/session.entity";
 import { TypeOrmTransactionContext } from "@infrastructure/database/typeorm/typeorm-transaction-context";
 import { Injectable } from "@nestjs/common";
+import { TransactionContextInterface } from "@infrastructure/database/contracts/transaction-context.interface";
 
 @Entity("sessions")
 export class SessionEntity {
@@ -96,6 +97,21 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
         const entity = await this.repository.findOne({
             where: {
                 id: id.toString(),
+            },
+            relations: {
+                user: true,
+            },
+        });
+
+        return entity ? this.toDomain(entity) : null;
+    }
+
+    async findByUserId(userId: ULID, context?: TransactionContextInterface): Promise<Session | null> {
+        const entity = await this.repository.findOne({
+            where: {
+                user: {
+                    id: userId.toString()
+                },
             },
             relations: {
                 user: true,

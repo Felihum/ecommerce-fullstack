@@ -4,6 +4,7 @@ import { TransactionContextInterface } from "@infrastructure/database/contracts/
 
 export interface SessionRepositoryInterface{
     findById(id: ULID, context?: TransactionContextInterface): Promise<Session | null>;
+    findByUserId(userId: ULID, context?: TransactionContextInterface): Promise<Session | null>;
     findByRefreshToken(token: string, context?: TransactionContextInterface): Promise<Session | null>;
     insert(session: Session, context?: TransactionContextInterface): Promise<Session>;
     patch(session: Session, context?: TransactionContextInterface): Promise<Session>;

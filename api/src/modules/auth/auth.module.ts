@@ -19,6 +19,8 @@ import { Sha256Hasher } from "@infrastructure/cryptography/sha256/sha256.hasher"
 import { JwtTokenProvider } from "@infrastructure/authentication/jwt/jwt.provider";
 import { Argon2Hasher } from "@infrastructure/cryptography/argon2/argon2.hasher";
 import { RegisterUseCase } from "./domain/use-cases/register.use-case";
+import { AuthenticateAccessTokenUseCase } from "./domain/use-cases/authenticate-access-token.use-case";
+import { AuthenticationGuard } from "@infrastructure/authentication/guards/authentication.guard";
 
 export const AUTH_TOKENS = {
   USER_REPOSITORY: Symbol("USER_REPOSITORY"),
@@ -131,11 +133,27 @@ export const AUTH_TOKENS = {
         AUTH_TOKENS.PASSWORD_HASHER,
       ],
     },
+    {
+      provide: AuthenticateAccessTokenUseCase,
+      useFactory: (
+        tokenProvider: TokenProviderInterface,
+        sessionRepository: SessionRepositoryInterface,
+      ) => new AuthenticateAccessTokenUseCase(
+        tokenProvider,
+        sessionRepository
+      ),
+      inject: [
+        AUTH_TOKENS.TOKEN_PROVIDER,
+        AUTH_TOKENS.SESSION_REPOSITORY
+      ]
+    },
+    AuthenticationGuard
   ],
 
   exports: [
     LoginUseCase,
-    RegisterUseCase
+    RegisterUseCase,
+    AuthenticateAccessTokenUseCase
   ],
 })
 export class AuthModule {}
