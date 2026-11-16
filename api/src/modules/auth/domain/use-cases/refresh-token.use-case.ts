@@ -38,10 +38,12 @@ export class RefreshTokenUseCase {
 
     return this.unitOfWork.execute(async (context) => {
 
-      const session = await this.sessionRepository.findByUserIdForUpdate(
+      const sessions = await this.sessionRepository.findByUserIdForUpdate(
         ULID.from(payload.userId),
         context,
       );
+
+      const session = sessions[0]
 
       if (!session) {
         throw new InvalidRefreshTokenException();
