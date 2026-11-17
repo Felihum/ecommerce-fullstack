@@ -106,7 +106,7 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
         return entity ? this.toDomain(entity) : null;
     }
 
-    async findByUserId(userId: ULID, context?: TransactionContextInterface): Promise<Session | null> {
+    async findByUserId(userId: ULID, context?: TypeOrmTransactionContext): Promise<Session | null> {
         const entity = await this.repository.findOne({
             where: {
                 user: {

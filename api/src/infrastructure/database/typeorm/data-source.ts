@@ -5,6 +5,7 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import path from "path";
 import { EnvSchema } from "@config/env.schema";
+import { ProductEntity } from "@modules/product/infrastructure/product.typeorm.repository";
 
 console.log({
     host: EnvSchema.DATABASE_HOST,
@@ -26,6 +27,7 @@ export const AppDataSource = new DataSource({
         UserEntity,
         SessionEntity,
         AddressEntity,
+        ProductEntity
     ],
     migrations: [
         path.join(__dirname, '../migrations/*.ts'),
