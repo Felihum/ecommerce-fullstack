@@ -33,4 +33,18 @@ export class Product{
         this.createdAt = createdAt ?? new Date()
         this.updatedAt = updatedAt ?? new Date()
     }
+
+    toDict(){
+        return {
+            id: this.id.toString(),
+            title: this.title,
+            description: this.description,
+            price: this.price,
+            quantity: this.quantity,
+            discount: this.discount.getValue(),
+            imageUrl: this.imageUrl,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+        }
+    }
 }

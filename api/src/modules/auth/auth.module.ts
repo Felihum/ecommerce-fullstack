@@ -174,6 +174,7 @@ export const AUTH_TOKENS = {
   exports: [
     LoginUseCase,
     RegisterUseCase,
+    AuthenticationGuard,
     AuthenticateAccessTokenUseCase,
     RefreshTokenUseCase
   ],

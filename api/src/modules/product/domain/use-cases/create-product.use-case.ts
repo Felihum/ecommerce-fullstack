@@ -7,7 +7,6 @@ export interface CreateProductInput{
     price: number,
     quantity: number
     imageUrl: string,
-    discount?: number,
 }
 
 export class CreateProductUseCase{
@@ -22,11 +21,10 @@ export class CreateProductUseCase{
             input.price, 
             input.quantity, 
             input.imageUrl, 
-            input.discount
         )
 
         const productPersisted = await this.productRepository.insert(product)
         
-        return productPersisted
+        return productPersisted.toDict()
     }
 }

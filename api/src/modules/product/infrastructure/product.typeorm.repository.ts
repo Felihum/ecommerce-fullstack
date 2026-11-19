@@ -133,6 +133,8 @@ export class ProductTypeOrmRepository
     ): Promise<Product> {
         const repository = this.getRepository(context);
 
+        product.updatedAt = new Date()
+
         const persistence = this.toPersistence(product);
 
         const result = await repository.update(

@@ -7,6 +7,9 @@ import { CreateProductUseCase } from "./domain/use-cases/create-product.use-case
 import { ProductEntity, ProductTypeOrmRepository } from "./infrastructure/product.typeorm.repository";
 import { ProductController } from "./presentation/product.controller";
 import { ProductRepositoryInterface } from "./domain/contracts/product.repository.interface";
+import { UpdateProductUseCase } from "./domain/use-cases/update-product.use-case";
+import { ListProductsUseCase } from "./domain/use-cases/list-products.use-case";
+import { AuthModule } from "@modules/auth/auth.module";
 
 export const PRODUCT_TOKENS = {
   UNIT_OF_WORK: Symbol("UNIT_OF_WORK"),
@@ -18,6 +21,7 @@ export const PRODUCT_TOKENS = {
     TypeOrmModule.forFeature([
       ProductEntity,
     ]),
+    AuthModule
   ],
 
   controllers: [
@@ -48,6 +52,17 @@ export const PRODUCT_TOKENS = {
       ],
     },
     {
+      provide: ListProductsUseCase,
+      useFactory: (
+        productRepository: ProductRepositoryInterface,
+      ) => new ListProductsUseCase(
+        productRepository,
+      ),
+      inject: [
+        PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+      ],
+    },
+    {
       provide: CreateProductUseCase,
       useFactory: (
         productRepository: ProductRepositoryInterface,
@@ -57,11 +72,24 @@ export const PRODUCT_TOKENS = {
       inject: [
         PRODUCT_TOKENS.PRODUCT_REPOSITORY,
       ],
-    },    
+    },
+    {
+      provide: UpdateProductUseCase,
+      useFactory: (
+        productRepository: ProductRepositoryInterface,
+      ) => new UpdateProductUseCase(
+        productRepository,
+      ),
+      inject: [
+        PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+      ],
+    },
   ],
 
   exports: [
-    CreateProductUseCase
+    ListProductsUseCase,
+    CreateProductUseCase,
+    UpdateProductUseCase
   ],
 })
 export class ProductModule {}
