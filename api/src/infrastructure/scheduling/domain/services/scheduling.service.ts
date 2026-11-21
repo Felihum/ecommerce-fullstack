@@ -8,6 +8,7 @@ import { CronExpressionParser } from 'cron-parser';
 import { JobRegistry } from './job.registry';
 import { type ScheduledJobRepositoryInterface } from '../contracts/scheduled-job.repository';
 import { ScheduledJob } from '../models/scheduled-job.entity';
+import { ScheduledJobSynchronizer } from './scheduled-jobs-synchronizer.service';
 
 @Injectable()
 export class SchedulingService implements OnModuleInit {
@@ -29,6 +30,7 @@ export class SchedulingService implements OnModuleInit {
     constructor(
         private readonly repository: ScheduledJobRepositoryInterface,
         private readonly registry: JobRegistry,
+        private readonly synchronizer: ScheduledJobSynchronizer,
     ) {}
 
     onModuleInit(): void {
@@ -43,6 +45,9 @@ export class SchedulingService implements OnModuleInit {
 
     @Interval(5000)
     async processScheduledJobs(): Promise<void> {
+        if (!this.synchronizer.isReady()) {
+            return;
+        }
 
         if (this.isPolling) {
             return;

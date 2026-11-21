@@ -6,24 +6,24 @@ import { SchedulingService } from "./domain/services/scheduling.service";
 import { ScheduledJobEntity, ScheduledJobTypeormRepository } from "./infrastructure/scheduled-job.typeorm.repository";
 import { ScheduledJobRepositoryInterface } from "./domain/contracts/scheduled-job.repository";
 import { JobRegistry } from "./domain/services/job.registry";
-import { JobExecutor } from "./domain/contracts/job-executor.interface";
-
-export const SCHEDULED_JOB_TOKEN = {
-  SCHEDULED_JOB_REPOSITORY: Symbol("SCHEDULED_JOB_REPOSITORY"),
-  JOB_REGISTRY: Symbol("JOB_REGISTRY")
-};
+import { DatabaseModule } from "@infrastructure/database/typeorm/typeorm.module";
+import { PaymentModule } from "@modules/payment/payment.module";
+import { ProcessPaymentsExecutor } from "@modules/payment/domain/executors/process-payments.executor";
+import { ScheduledJobSynchronizer } from "./domain/services/scheduled-jobs-synchronizer.service";
 
 @Module({
   imports: [
+    DatabaseModule,
     TypeOrmModule.forFeature([
       ScheduledJobEntity,
     ]),
+    PaymentModule,
   ],
 
   providers: [
     TypeOrmTransactionContext,
     {
-      provide: SCHEDULED_JOB_TOKEN.SCHEDULED_JOB_REPOSITORY,
+      provide: ScheduledJobTypeormRepository,
       useFactory: (
         repository: Repository<ScheduledJobEntity>,
         datasource: DataSource
@@ -40,27 +40,44 @@ export const SCHEDULED_JOB_TOKEN = {
       provide: SchedulingService,
       useFactory: (
         scheduledJobRepository: ScheduledJobRepositoryInterface,
-        jobRegistry: JobRegistry
+        jobRegistry: JobRegistry,
+        synchronizer: ScheduledJobSynchronizer,
       ) => new SchedulingService(
         scheduledJobRepository,
-        jobRegistry
+        jobRegistry,
+        synchronizer
       ),
       inject: [
-        SCHEDULED_JOB_TOKEN.SCHEDULED_JOB_REPOSITORY,
-        SCHEDULED_JOB_TOKEN.JOB_REGISTRY,
+        ScheduledJobTypeormRepository,
+        JobRegistry,
+        ScheduledJobSynchronizer,
       ],
     },
     {
-      provide: SCHEDULED_JOB_TOKEN.JOB_REGISTRY,
+      provide: JobRegistry,
       useFactory: (
-        registeredExecutors: JobExecutor[],
-      ) => new JobRegistry(
-        registeredExecutors,
-      ),
-    //   inject: [
-    //     
-    //   ],
+          paymentExecutor: ProcessPaymentsExecutor,
+      ) => new JobRegistry([
+          paymentExecutor,
+      ]),
+      inject: [
+          ProcessPaymentsExecutor,
+      ]
     },
+    {
+      provide: ScheduledJobSynchronizer,
+      useFactory: (
+        jobRegistry: JobRegistry,
+        scheduledJobRepository: ScheduledJobRepositoryInterface,
+      ) => new ScheduledJobSynchronizer(
+        jobRegistry,
+        scheduledJobRepository,
+      ),
+      inject: [
+        JobRegistry,
+        ScheduledJobTypeormRepository,
+      ],
+    }
   ],
 
   exports: [

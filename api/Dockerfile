@@ -52,5 +52,3 @@ RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3001
-
-CMD ["node", "dist/main"]

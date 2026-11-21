@@ -1,25 +1,15 @@
-
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    PrimaryColumn,
-    Repository,
-    UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn, Repository, UpdateDateColumn } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ScheduledJob } from '../domain/models/scheduled-job.entity';
-import { ScheduledJobRepositoryInterface } from '../domain/contracts/scheduled-job.repository';
+import { ScheduledJobDefinition, ScheduledJobRepositoryInterface } from '../domain/contracts/scheduled-job.repository';
 import { ULID } from '@shared/domain/value-objects/ulid.vo';
 import { TransactionContextInterface } from '@infrastructure/database/contracts/transaction-context.interface';
 import { TypeOrmTransactionContext } from '@infrastructure/database/typeorm/typeorm-transaction-context';
 
-
 @Entity('scheduled_jobs')
 export class ScheduledJobEntity {
-
     @PrimaryColumn('varchar', { length: 26 })
     id: string;
 
@@ -133,7 +123,7 @@ export class ScheduledJobTypeormRepository implements ScheduledJobRepositoryInte
 
         return this.datasource.transaction(async (manager) => {
 
-            const rows = await manager.query(
+            const [records, affected] = await manager.query(
                 `
                 WITH due_jobs AS (
                     SELECT id
@@ -168,7 +158,7 @@ export class ScheduledJobTypeormRepository implements ScheduledJobRepositoryInte
                 ],
             );
 
-            return rows.map((row: any) => this.toDomain(
+            return records.map((row: any) => this.toDomain(
                 this.mapRowToEntity(row),
             ));
         });
@@ -224,6 +214,60 @@ export class ScheduledJobTypeormRepository implements ScheduledJobRepositoryInte
             .execute();
     }
 
+    async synchronizeDefinitions(definitions: ScheduledJobDefinition[]): Promise<void> {
+        await this.datasource.transaction(async (manager) => {
+
+            for (const definition of definitions) {
+
+                await manager.query(
+                    `
+                    INSERT INTO scheduled_jobs (
+                        id,
+                        slug,
+                        cron_expression,
+                        timezone,
+                        next_execution_at,
+                        enabled,
+                        attempts,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (
+                        $1, $2, $3, $4, $5, $6, 0, NOW(), NOW()
+                    )
+                    ON CONFLICT (slug)
+                    DO UPDATE SET
+                        cron_expression = EXCLUDED.cron_expression,
+                        timezone = EXCLUDED.timezone,
+                        enabled = EXCLUDED.enabled,
+
+                        next_execution_at = CASE
+                            WHEN
+                                scheduled_jobs.cron_expression
+                                    IS DISTINCT FROM EXCLUDED.cron_expression
+                                OR scheduled_jobs.timezone
+                                    IS DISTINCT FROM EXCLUDED.timezone
+                                OR scheduled_jobs.enabled
+                                    IS DISTINCT FROM EXCLUDED.enabled
+                            THEN EXCLUDED.next_execution_at
+                            ELSE scheduled_jobs.next_execution_at
+                        END,
+
+                        updated_at = NOW();
+                    `,
+                    [
+                        ULID.create().toString(),
+                        definition.slug,
+                        definition.cronExpression,
+                        definition.timezone,
+                        definition.nextExecutionAt,
+                        definition.enabled,
+                    ],
+                );
+            }
+        });
+    }
+
     async releaseLock(
         id: string,
         workerId: string,
@@ -242,6 +286,29 @@ export class ScheduledJobTypeormRepository implements ScheduledJobRepositoryInte
             .where('id = :id', { id })
             .andWhere('locked_by = :workerId', { workerId })
             .execute();
+    }
+
+    async renewLock(
+        id: string,
+        workerId: string,
+        lockDurationSeconds: number,
+    ): Promise<void> {
+
+        const result = await this.datasource
+            .createQueryBuilder()
+            .update(ScheduledJobEntity)
+            .set({
+                lockedUntil: () =>
+                    `NOW() + (${lockDurationSeconds} * INTERVAL '1 second')`,
+            })
+            .where('id = :id', { id })
+            .andWhere('locked_by = :workerId', { workerId })
+            .andWhere('locked_until > NOW()')
+            .execute();
+
+        if (result.affected !== 1) {
+            throw new Error(`Lost lock for scheduled job: ${id}`);
+        }
     }
 
     private toDomain(

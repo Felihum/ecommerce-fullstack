@@ -6,15 +6,7 @@ import { DataSource } from "typeorm";
 import path from "path";
 import { EnvSchema } from "@config/env.schema";
 import { ProductEntity } from "@modules/product/infrastructure/product.typeorm.repository";
-
-console.log({
-    host: EnvSchema.DATABASE_HOST,
-    port: EnvSchema.POSTGRES_PORT,
-    username: EnvSchema.POSTGRES_USER,
-    password: EnvSchema.POSTGRES_PASSWORD,
-    database: EnvSchema.POSTGRES_DB,
-    passwordLength: EnvSchema.POSTGRES_PASSWORD?.length,
-});
+import { ScheduledJobEntity } from "@infrastructure/scheduling/infrastructure/scheduled-job.typeorm.repository";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -27,7 +19,8 @@ export const AppDataSource = new DataSource({
         UserEntity,
         SessionEntity,
         AddressEntity,
-        ProductEntity
+        ProductEntity,
+        ScheduledJobEntity
     ],
     migrations: [
         path.join(__dirname, '../migrations/*.ts'),

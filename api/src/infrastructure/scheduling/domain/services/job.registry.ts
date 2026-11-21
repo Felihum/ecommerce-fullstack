@@ -31,6 +31,10 @@ export class JobRegistry implements OnModuleInit {
         return this.executors.has(slug);
     }
 
+    getAll(): JobExecutor[] {
+        return [...this.executors.values()];
+    }
+
     getRegisteredSlugs(): string[] {
         return [...this.executors.keys()];
     }
