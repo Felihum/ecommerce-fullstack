@@ -6,7 +6,7 @@ export class Product{
     public title: string
     public description: string
     public price: number
-    public quantity: number
+    public contentUrl: string
     public discount: Discount
     public imageUrl: string
     public createdAt: Date
@@ -16,7 +16,7 @@ export class Product{
         title: string,
         description: string,
         price: number,
-        quantity: number,
+        contentUrl: string,
         imageUrl: string,
         discount?: number,
         id?: ULID,
@@ -26,7 +26,7 @@ export class Product{
         this.id = id ?? ULID.create()
         this.title = title
         this.description = description
-        this.quantity = quantity
+        this.contentUrl = contentUrl
         this.price = price
         this.imageUrl = imageUrl
         this.discount = Discount.create(discount ?? 0)
@@ -40,7 +40,7 @@ export class Product{
             title: this.title,
             description: this.description,
             price: this.price,
-            quantity: this.quantity,
+            contentUrl: this.contentUrl,
             discount: this.discount.getValue(),
             imageUrl: this.imageUrl,
             createdAt: this.createdAt,

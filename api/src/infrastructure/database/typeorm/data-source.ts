@@ -7,6 +7,8 @@ import path from "path";
 import { EnvSchema } from "@config/env.schema";
 import { ProductEntity } from "@modules/product/infrastructure/product.typeorm.repository";
 import { ScheduledJobEntity } from "@infrastructure/scheduling/infrastructure/scheduled-job.typeorm.repository";
+import { PaymentTransactionEntity } from "@modules/payment/infrastructure/payment.typeorm.repository";
+import { OrderEntity } from "@modules/order/infrastructure/order.typeorm.repository";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -20,6 +22,8 @@ export const AppDataSource = new DataSource({
         SessionEntity,
         AddressEntity,
         ProductEntity,
+        PaymentTransactionEntity,
+        OrderEntity,
         ScheduledJobEntity
     ],
     migrations: [

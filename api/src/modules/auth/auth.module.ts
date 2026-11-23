@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule, getRepositoryToken } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { AuthController } from "./presentation/controllers/auth.controller";
 import { UserRepositoryInterface } from "./domain/contracts/user.repository.interface";
 import { SessionRepositoryInterface } from "./domain/contracts/session.repository.interface";
@@ -22,11 +22,9 @@ import { RegisterUseCase } from "./domain/use-cases/register.use-case";
 import { AuthenticateAccessTokenUseCase } from "./domain/use-cases/authenticate-access-token.use-case";
 import { AuthenticationGuard } from "@infrastructure/authentication/guards/authentication.guard";
 import { RefreshTokenUseCase } from "./domain/use-cases/refresh-token.use-case";
+import { DatabaseModule } from "@infrastructure/database/typeorm/typeorm.module";
 
 export const AUTH_TOKENS = {
-  USER_REPOSITORY: Symbol("USER_REPOSITORY"),
-  SESSION_REPOSITORY: Symbol("SESSION_REPOSITORY"),
-  UNIT_OF_WORK: Symbol("UNIT_OF_WORK"),
   ID_GENERATOR: Symbol("ID_GENERATOR"),
   PASSWORD_HASHER: Symbol("PASSWORD_HASHER"),
   TOKEN_PROVIDER: Symbol("TOKEN_PROVIDER"),
@@ -40,6 +38,7 @@ export const AUTH_TOKENS = {
       SessionEntity,
       AddressEntity,
     ]),
+    DatabaseModule
   ],
 
   controllers: [
@@ -47,9 +46,8 @@ export const AUTH_TOKENS = {
   ],
 
   providers: [
-    TypeOrmTransactionContext,
     {
-      provide: AUTH_TOKENS.USER_REPOSITORY,
+      provide: UserTypeormRepository,
       useFactory: (
         repository: Repository<UserEntity>,
       ) => new UserTypeormRepository(repository),
@@ -58,7 +56,7 @@ export const AUTH_TOKENS = {
       ],
     },
     {
-      provide: AUTH_TOKENS.SESSION_REPOSITORY,
+      provide: SessionTypeOrmRepository,
       useFactory: (
         repository: Repository<SessionEntity>,
       ) => new SessionTypeOrmRepository(
@@ -66,16 +64,6 @@ export const AUTH_TOKENS = {
       ),
       inject: [
         getRepositoryToken(SessionEntity),
-        TypeOrmTransactionContext,
-      ],
-    },
-    {
-      provide: AUTH_TOKENS.UNIT_OF_WORK,
-      useFactory: (
-        dataSource: DataSource,
-      ) => new TypeOrmUnitOfWork(dataSource),
-      inject: [
-        DataSource,
       ],
     },
     {
@@ -99,10 +87,10 @@ export const AUTH_TOKENS = {
       useFactory: (
         userRepository: UserRepositoryInterface,
         sessionRepository: SessionRepositoryInterface,
-        unitOfWork: UnitOfWorkInterface,
         passwordHasher: PasswordHasherInterface,
         tokenProvider: TokenProviderInterface,
         tokenHasher: TokenHasherInterface,
+        unitOfWork: UnitOfWorkInterface,
       ) => new LoginUseCase(
         userRepository,
         sessionRepository,
@@ -112,12 +100,12 @@ export const AUTH_TOKENS = {
         unitOfWork,
       ),
       inject: [
-        AUTH_TOKENS.USER_REPOSITORY,
-        AUTH_TOKENS.SESSION_REPOSITORY,
-        AUTH_TOKENS.UNIT_OF_WORK,
+        UserTypeormRepository,
+        SessionTypeOrmRepository,
         AUTH_TOKENS.PASSWORD_HASHER,
         AUTH_TOKENS.TOKEN_PROVIDER,
         AUTH_TOKENS.TOKEN_HASHER,
+        TypeOrmUnitOfWork,
       ],
     },
     {
@@ -130,7 +118,7 @@ export const AUTH_TOKENS = {
         passwordHasher,
       ),
       inject: [
-        AUTH_TOKENS.USER_REPOSITORY,
+        UserTypeormRepository,
         AUTH_TOKENS.PASSWORD_HASHER,
       ],
     },
@@ -145,7 +133,7 @@ export const AUTH_TOKENS = {
       ),
       inject: [
         AUTH_TOKENS.TOKEN_PROVIDER,
-        AUTH_TOKENS.SESSION_REPOSITORY
+        SessionTypeOrmRepository
       ]
     },
     {
@@ -162,16 +150,17 @@ export const AUTH_TOKENS = {
         unitOfWork
       ),
       inject: [
-        AUTH_TOKENS.SESSION_REPOSITORY,
+        SessionTypeOrmRepository,
         AUTH_TOKENS.TOKEN_PROVIDER,
         AUTH_TOKENS.TOKEN_HASHER,
-        AUTH_TOKENS.UNIT_OF_WORK
+        TypeOrmUnitOfWork
       ]
     },
     AuthenticationGuard
   ],
 
   exports: [
+    UserTypeormRepository,
     LoginUseCase,
     RegisterUseCase,
     AuthenticationGuard,

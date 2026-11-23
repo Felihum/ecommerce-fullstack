@@ -35,12 +35,6 @@ export class ProductEntity {
     price: string;
 
     @Column({
-        type: 'int',
-        default: 0,
-    })
-    quantity: number;
-
-    @Column({
         type: 'decimal',
         precision: 5,
         scale: 2,
@@ -52,6 +46,11 @@ export class ProductEntity {
         type: 'text',
     })
     imageUrl: string;
+
+    @Column({
+        type: 'text',
+    })
+    contentUrl: string;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -169,7 +168,7 @@ export class ProductTypeOrmRepository
             entity.title,
             entity.description,
             Number(entity.price),
-            entity.quantity,
+            entity.contentUrl,
             entity.imageUrl,
             Number(entity.discount),
             ULID.from(entity.id),
@@ -184,7 +183,7 @@ export class ProductTypeOrmRepository
             title: product.title,
             description: product.description,
             price: product.price.toString(),
-            quantity: product.quantity,
+            contentUrl: product.contentUrl,
             discount: product.discount.getValue(),
             imageUrl: product.imageUrl,
             createdAt: product.createdAt,

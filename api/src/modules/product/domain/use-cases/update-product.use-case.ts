@@ -6,7 +6,7 @@ export interface UpdateProductInput{
     title?: string,
     description?: string,
     price?: number,
-    quantity?: number,
+    contentUrl?: string,
     imageUrl?: string,
 }
 
@@ -27,7 +27,7 @@ export class UpdateProductUseCase{
         if(input.title) product.title = input.title
         if(input.description) product.description = input.description
         if(input.price) product.price = input.price
-        if(input.quantity) product.quantity = input.quantity
+        if(input.contentUrl) product.contentUrl = input.contentUrl
         if(input.imageUrl) product.imageUrl = input.imageUrl
 
         const productUpdated = await this.productRepository.update(product)

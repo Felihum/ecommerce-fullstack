@@ -3,6 +3,8 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from '@modules/product/product.module';
 import { DatabaseModule } from '@infrastructure/database/typeorm/typeorm.module';
+import { OrderModule } from '@modules/order/order.module';
+import { PaymentModule } from '@modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { DatabaseModule } from '@infrastructure/database/typeorm/typeorm.module'
     // }),
     DatabaseModule,
     AuthModule,
+    OrderModule,
+    PaymentModule,
     ProductModule
   ],
   controllers: [],

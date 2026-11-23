@@ -5,7 +5,7 @@ export interface CreateProductInput{
     title: string,
     description: string,
     price: number,
-    quantity: number
+    contentUrl: string
     imageUrl: string,
 }
 
@@ -19,7 +19,7 @@ export class CreateProductUseCase{
             input.title, 
             input.description, 
             input.price, 
-            input.quantity, 
+            input.contentUrl, 
             input.imageUrl, 
         )
 

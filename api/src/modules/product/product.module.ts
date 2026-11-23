@@ -11,11 +11,6 @@ import { UpdateProductUseCase } from "./domain/use-cases/update-product.use-case
 import { ListProductsUseCase } from "./domain/use-cases/list-products.use-case";
 import { AuthModule } from "@modules/auth/auth.module";
 
-export const PRODUCT_TOKENS = {
-  UNIT_OF_WORK: Symbol("UNIT_OF_WORK"),
-  PRODUCT_REPOSITORY: Symbol("PRODUCT_REPOSITORY")
-};
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -29,9 +24,8 @@ export const PRODUCT_TOKENS = {
   ],
 
   providers: [
-    TypeOrmTransactionContext,
     {
-      provide: PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+      provide: ProductTypeOrmRepository,
       useFactory: (
         repository: Repository<ProductEntity>,
       ) => new ProductTypeOrmRepository(
@@ -39,16 +33,6 @@ export const PRODUCT_TOKENS = {
       ),
       inject: [
         getRepositoryToken(ProductEntity),
-        TypeOrmTransactionContext,
-      ],
-    },
-    {
-      provide: PRODUCT_TOKENS.UNIT_OF_WORK,
-      useFactory: (
-        dataSource: DataSource,
-      ) => new TypeOrmUnitOfWork(dataSource),
-      inject: [
-        DataSource,
       ],
     },
     {
@@ -59,7 +43,7 @@ export const PRODUCT_TOKENS = {
         productRepository,
       ),
       inject: [
-        PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+        ProductTypeOrmRepository,
       ],
     },
     {
@@ -70,7 +54,7 @@ export const PRODUCT_TOKENS = {
         productRepository,
       ),
       inject: [
-        PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+        ProductTypeOrmRepository,
       ],
     },
     {
@@ -81,7 +65,7 @@ export const PRODUCT_TOKENS = {
         productRepository,
       ),
       inject: [
-        PRODUCT_TOKENS.PRODUCT_REPOSITORY,
+        ProductTypeOrmRepository,
       ],
     },
   ],
@@ -89,7 +73,8 @@ export const PRODUCT_TOKENS = {
   exports: [
     ListProductsUseCase,
     CreateProductUseCase,
-    UpdateProductUseCase
+    UpdateProductUseCase,
+    ProductTypeOrmRepository
   ],
 })
 export class ProductModule {}
