@@ -1,5 +1,5 @@
-import { CreatePixPaymentDTO, PaymentGatewayInterface, PaymentStatusResponseDTO, PixPaymentResponseDTO } from "../domain/contracts/payment.gateway";
-import { PaymentStatus } from "../domain/models/payment-status.state-machine";
+import { CreatePixPaymentDTO, PaymentGatewayInterface, PaymentStatusResponseDTO, PixPaymentResponseDTO } from "../../domain/contracts/payment.gateway";
+import { PaymentStatus } from "../../domain/models/payment-status.state-machine";
 
 export class FakePaymentGateway implements PaymentGatewayInterface {
 

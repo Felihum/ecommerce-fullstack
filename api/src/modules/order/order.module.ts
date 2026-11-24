@@ -16,7 +16,7 @@ import { UnitOfWorkInterface } from "@infrastructure/database/contracts/unit-of-
 import { UserTypeormRepository } from "@modules/auth/infrastructure/repositories/user.typeorm.repository";
 import { ProductTypeOrmRepository } from "@modules/product/infrastructure/product.typeorm.repository";
 import { PaymentTypeOrmRepository } from "@modules/payment/infrastructure/payment.typeorm.repository";
-import { FakePaymentGateway } from "@modules/payment/infrastructure/fake-payment.gateway";
+import { FakePaymentGateway } from "@modules/payment/infrastructure/gateway/fake-payment.gateway";
 import { DatabaseModule } from "@infrastructure/database/typeorm/typeorm.module";
 import { TypeOrmUnitOfWork } from "@infrastructure/database/typeorm/typeorm-unit-of-work";
 import { OrderController } from "./presentation/order.controller";

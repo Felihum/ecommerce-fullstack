@@ -3,13 +3,15 @@ import { ProcessPaymentsExecutor } from "./domain/executors/process-payments.exe
 import { PaymentTransactionEntity, PaymentTypeOrmRepository } from "./infrastructure/payment.typeorm.repository";
 import { Repository } from "typeorm";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { FakePaymentGateway } from "./infrastructure/fake-payment.gateway";
+import { FakePaymentGateway } from "./infrastructure/gateway/fake-payment.gateway";
+import { IdempotencyModule } from "@infrastructure/idempotency/idempotency.module";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([
             PaymentTransactionEntity,
-        ])
+        ]),
+        IdempotencyModule
     ],
     providers: [
         ProcessPaymentsExecutor,
