@@ -9,6 +9,8 @@ import { ProductEntity } from "@modules/product/infrastructure/product.typeorm.r
 import { ScheduledJobEntity } from "@infrastructure/scheduling/infrastructure/scheduled-job.typeorm.repository";
 import { PaymentTransactionEntity } from "@modules/payment/infrastructure/payment.typeorm.repository";
 import { OrderEntity } from "@modules/order/infrastructure/order.typeorm.repository";
+import { PurchaseEntity } from "@modules/purchase/infrastructure/purchase.typeorm.repository";
+import { ProcessedEventEntity } from "@infrastructure/idempotency/infrastructure/processed-event.typeorm.repository";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -24,7 +26,10 @@ export const AppDataSource = new DataSource({
         ProductEntity,
         PaymentTransactionEntity,
         OrderEntity,
-        ScheduledJobEntity
+        ScheduledJobEntity,
+        PurchaseEntity,
+        PaymentTransactionEntity,
+        ProcessedEventEntity
     ],
     migrations: [
         path.join(__dirname, '../migrations/*.ts'),

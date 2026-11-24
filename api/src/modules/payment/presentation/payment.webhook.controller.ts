@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { PaymentEventDispatcher } from "../domain/handlers/payment-event.dispatcher";
+import { EventAlreadyProcessedException } from "@infrastructure/idempotency/domain/exceptions/event-already-processed.exception";
 
 @Controller("webhook/payment")
 export class PaymentWebhookController {
@@ -9,8 +10,16 @@ export class PaymentWebhookController {
 
     @Post("")
     async handleEvent(@Body() providerEvent: unknown){
-        await this.paymentEventDispatcher.execute(providerEvent)
+        try{
+            await this.paymentEventDispatcher.execute(providerEvent)
 
-        return { received: true }
+            return { received: true }
+        } catch(error){
+            if(error instanceof EventAlreadyProcessedException){
+                return { received: true }
+            } else {
+                throw error
+            }
+        }
     }
 }

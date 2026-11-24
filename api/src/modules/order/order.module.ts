@@ -1,11 +1,8 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmTransactionContext } from "@infrastructure/database/typeorm/typeorm-transaction-context";
-import { Repository } from "typeorm";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { OrderEntity, OrderTypeOrmRepository } from "./infrastructure/order.typeorm.repository";
 import { CreateOrderUseCase } from "./domain/use-cases/create-order.use-case";
 import { AuthModule } from "@modules/auth/auth.module";
-import { PaymentModule } from "@modules/payment/payment.module";
 import { OrderRepositoryInterface } from "./domain/contracts/order.repository";
 import { UserRepositoryInterface } from "@modules/auth/domain/contracts/user.repository.interface";
 import { ProductModule } from "@modules/product/product.module";
@@ -20,6 +17,8 @@ import { FakePaymentGateway } from "@modules/payment/infrastructure/gateway/fake
 import { DatabaseModule } from "@infrastructure/database/typeorm/typeorm.module";
 import { TypeOrmUnitOfWork } from "@infrastructure/database/typeorm/typeorm-unit-of-work";
 import { OrderController } from "./presentation/order.controller";
+import { OrderPersistenceModule } from "./infrastructure/order.persistence.module";
+import { PaymentInfrastructureModule } from "@modules/payment/infrastructure/payment.persistence.module";
 
 @Module({
     imports: [
@@ -28,24 +27,14 @@ import { OrderController } from "./presentation/order.controller";
         ]),
         DatabaseModule,
         AuthModule,
+        OrderPersistenceModule,
         ProductModule,
-        PaymentModule,
+        PaymentInfrastructureModule,
     ],
     controllers: [
         OrderController
     ],
     providers: [
-        {
-            provide: OrderTypeOrmRepository,
-            useFactory: (
-                repository: Repository<OrderEntity>,
-            ) => new OrderTypeOrmRepository(
-                repository,
-            ),
-            inject: [
-                getRepositoryToken(OrderEntity),
-            ],
-        },
         {
             provide: CreateOrderUseCase,
             useFactory: (
@@ -74,8 +63,8 @@ import { OrderController } from "./presentation/order.controller";
         },
     ],
     exports: [
-        OrderTypeOrmRepository,
-        CreateOrderUseCase
+        CreateOrderUseCase,
+        OrderPersistenceModule
     ],
 })
 export class OrderModule {}

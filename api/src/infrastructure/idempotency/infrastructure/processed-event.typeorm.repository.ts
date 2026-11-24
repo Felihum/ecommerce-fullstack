@@ -9,7 +9,8 @@ import { Repository } from 'typeorm';
 import { ULID } from '@shared/domain/value-objects/ulid.vo';
 import { TypeOrmTransactionContext } from '@infrastructure/database/typeorm/typeorm-transaction-context';
 import { ProcessedEvent } from '../domain/models/processed-event.entity';
-import { ProcessedEventRepositoryInterface } from '../domain/contracts/process-event.repository';
+import { ProcessedEventRepositoryInterface } from '../domain/contracts/processed-event.repository';
+import { EventAlreadyProcessedException } from '../domain/exceptions/event-already-processed.exception';
 
 @Entity('processed_events')
 export class ProcessedEventEntity {
@@ -40,6 +41,16 @@ export class ProcessedEventTypeOrmRepository implements ProcessedEventRepository
         context?: TypeOrmTransactionContext,
     ): Promise<ProcessedEvent> {
         const repository = this.getRepository(context);
+
+        const existingEvent = await repository.findOne({
+            where: {
+                eventId: event.eventId,
+            },
+        });
+
+        if(existingEvent){
+            throw new EventAlreadyProcessedException()
+        }
 
         await repository
             .createQueryBuilder()

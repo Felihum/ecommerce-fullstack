@@ -11,18 +11,18 @@ export enum PaymentEventType {
 
 export class PaymentEvent extends DomainEvent{
     public provider: string;
-    public paymentId: ULID;
+    public paymentId: string;
     public amount: number;
-    public transactionId: string;
+    public transactionId: ULID;
 
     constructor(
         id: string,
         provider: string,
         type: PaymentEventType,
-        paymentId: ULID,
+        paymentId: string,
         amount: number,
         occurredAt: Date,
-        transactionId: string
+        transactionId: ULID
     ){
         super(id, type.toString(), occurredAt)
         this.provider = provider

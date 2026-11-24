@@ -1,4 +1,4 @@
-import { ProcessedEventRepositoryInterface } from "@infrastructure/idempotency/domain/contracts/process-event.repository";
+import { ProcessedEventRepositoryInterface } from "@infrastructure/idempotency/domain/contracts/processed-event.repository";
 import { PaymentEventHandler } from "../contracts/payment-event.handler";
 import { PaymentEventMapperInterface } from "../contracts/payment-event.mapper";
 import { UnitOfWorkInterface } from "@infrastructure/database/contracts/unit-of-work.interface";
