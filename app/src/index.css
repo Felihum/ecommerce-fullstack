@@ -1,13 +1,85 @@
+/* Ajustes globais */
+
+* { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--fonte-principal);
+  font-size: var(--fonte-tamanho-normal);
+  line-height: var(--altura-linha-texto);
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Import de Fonte*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* VARIÁVEIS DE ESTILO — [NOME DO PROJETO] */
+
+:root {
+
+  /* ===== CORES ===== */
+
+  /* Marca */
+  --cor-primaria: #744579;
+  --cor-primaria-hover: #4E315E;
+  --cor-secundaria: #ADEBB2;
+
+  /* Superfícies */
+  --cor-fundo: ##F5F5F5;
+  --cor-superficie: #FFFFC5;
+
+  /* Texto */
+  --cor-texto: #000000;
+  --cor-texto-suave: #5c5c5c;
+  --cor-texto-sobre-primaria: #FFFFFF;
+
+  /* Linhas */
+  --cor-borda: #000000;
+
+  /* Estados do sistema */
+  --cor-erro: #ff0000;
+  --cor-sucesso: #0dff00;
+  --cor-aviso: #fbff00;
+
+  /* ===== TIPOGRAFIA ===== */
+
+  --fonte-principal: "Poppins", sans-serif;
+
+
+  --fonte-tamanho-pequeno: 0.875rem
+  --fonte-tamanho-normal: 1rem;
+  --fonte-tamanho-medio: 1.125rem;
+  --fonte-tamanho-grande: 1.5rem;
+  --fonte-tamanho-titulo: 2rem;
+
+  --fonte-peso-normal: 400;
+  --fonte-peso-negrito: 700;
+
+  --altura-linha-texto: 1.6;
+  --altura-linha-titulo: 1.2;
+
+
+  /* ===== ESPAÇAMENTO ===== */
+
+  --espaco-pequeno: 0.5rem;
+  --espaco-medio: 1rem;
+  --espaco-grande: 2rem;
+
+
+  /* ===== FORMA ===== */
+
+  --raio-borda: 12px;
+  --espessura-borda: 1px;
+  --sombra-card: 0 2px 8px rgba(31, 22, 48, 0.08);
+
+  /* ===== LAYOUT ===== */
+
+  --largura-maxima: 1100px;
+}
+
