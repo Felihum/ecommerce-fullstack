@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
+import AuthModal from './components/AuthModal';
 
 function App() {
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
     <>
-      <Navbar/>
+      <Navbar onOpenAuth={() => setAuthOpen(true)} />
       <main>
         <h1>Livraria & Leitura Online</h1>
       </main>
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }

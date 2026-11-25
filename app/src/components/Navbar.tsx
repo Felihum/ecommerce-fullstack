@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import logo from '../logo.svg';
 import './Navbar.css';
 
-function Navbar() {
+type NavbarProps = {
+  onOpenAuth: () => void;
+};
+
+function Navbar({ onOpenAuth }: NavbarProps) {
   const [search, setSearch] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -64,7 +68,7 @@ function Navbar() {
           )}
         </div>
 
-        <button type="button" className="login-btn" >
+        <button type="button" className="login-btn" onClick={onOpenAuth}>
           Entrar
         </button>
       </div>
