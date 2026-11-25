@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
+import Home from './pages/Home';
 
 function App() {
   const [authOpen, setAuthOpen] = useState(false);
@@ -8,9 +9,7 @@ function App() {
   return (
     <>
       <Navbar onOpenAuth={() => setAuthOpen(true)} />
-      <main>
-        <h1>Livraria & Leitura Online</h1>
-      </main>
+      <Home />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
