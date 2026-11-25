@@ -1,0 +1,23 @@
+.book-details-cover {
+  margin: 0;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+}
+
+.book-details-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-details-cover-fallback {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}

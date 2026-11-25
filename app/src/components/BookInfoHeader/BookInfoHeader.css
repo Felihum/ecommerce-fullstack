@@ -1,0 +1,12 @@
+.book-details-info-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.book-details-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 2.50rem);
+  line-height: 1.08;
+  color: var(--text-primary);
+}

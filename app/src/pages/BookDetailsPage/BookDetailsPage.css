@@ -1,0 +1,95 @@
+.book-details-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  background-color: var(--bg-page);
+}
+
+.book-details-status {
+  padding: 20px;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.book-details-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: 38px;
+  padding: 32px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.book-details-left {
+  position: relative;
+}
+
+.book-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.book-details-price-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.book-details-original-price {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.book-details-original-price span {
+  text-decoration: line-through;
+}
+
+.book-details-price {
+  color: var(--brand-primary);
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.book-details-discount {
+  color: var(--accent-warm);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .book-details-card {
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .book-details-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 680px) {
+  .book-details-page {
+    padding: 24px 16px 40px;
+  }
+
+  .book-details-card {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .book-details-left {
+    max-width: 280px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}

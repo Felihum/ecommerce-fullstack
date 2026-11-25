@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import AuthModal from './components/AuthModal';
 import Home from './pages/Home';
 import Footer from './components/Footer';
+import BookDetailsPage from './pages/BookDetailsPage/BookDetailsPage';
 
 function App() {
   const [authOpen, setAuthOpen] = useState(false);
@@ -10,7 +11,7 @@ function App() {
   return (
     <>
       <Navbar onOpenAuth={() => setAuthOpen(true)} />
-      <Home />
+      <BookDetailsPage />
       <Footer />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
