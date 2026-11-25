@@ -1,0 +1,27 @@
+:root {
+  /* Fundos */
+  --bg-page: #FAF9F6;        
+  --bg-surface: #FFFFFF;     /* Cards, modais e navbar */
+  --bg-subtle: #F1EFEA;      /* Hover leve e tags */
+
+  /* Textos */
+  --text-primary: #1F2421;   
+  --text-secondary: #5C635E; /* Autor, editora e metadados */
+  --text-muted: #8C928E;     /* Placeholders e legendas */
+
+  /* Ação e Destaque */
+  --brand-primary: #2C5E4F;  
+  --brand-hover: #21473B;
+  --accent-warm: #C86D51;    
+
+  /* Bordas e Sombras */
+  --border-color: #E4E1D8;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 2px 8px rgba(31, 36, 33, 0.05);
+
+  /* Tipografia */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+}
