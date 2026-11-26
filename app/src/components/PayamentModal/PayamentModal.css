@@ -1,0 +1,199 @@
+.payment-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: color-mix(in srgb, var(--text-primary) 55%, transparent);
+}
+
+.payment-modal-card {
+  width: 100%;
+  max-width: 760px;
+  padding: 28px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.payment-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.payment-modal-header h2 {
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.payment-modal-close {
+  padding: 6px 10px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.payment-modal-close:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-subtle);
+}
+
+.payment-modal-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.8fr);
+  gap: 24px;
+}
+
+.payment-modal-product {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 0;
+  grid-column: 1 / -1;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.payment-modal-product .book-details-cover {
+  flex: 0 0 116px;
+  width: 116px;
+}
+
+.payment-modal-product-info {
+  padding-top: 8px;
+}
+
+.payment-modal-product-info h3 {
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 1.50rem;
+}
+
+.payment-modal-product-info p {
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.payment-modal-summary h3,
+.payment-modal-methods legend {
+  margin-bottom: 14px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.payment-modal-summary dl {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-modal-summary dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.payment-modal-summary dd {
+  color: var(--text-primary);
+}
+
+.payment-modal-summary .payment-modal-total {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.payment-modal-summary .payment-modal-total dd {
+  color: var(--brand-primary);
+}
+
+.payment-modal-methods {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.payment-modal-methods legend {
+  padding: 0;
+}
+
+.payment-modal-method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.payment-modal-method input {
+  accent-color: var(--brand-primary);
+}
+
+.payment-modal-method span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-primary);
+}
+
+.payment-modal-method small {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.payment-modal-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 24px;
+  padding: 12px 20px;
+  color: var(--bg-surface);
+  background-color: var(--brand-primary);
+  border: 0;
+  border-radius: var(--radius-full);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.payment-modal-submit:hover {
+  background-color: var(--brand-hover);
+}
+
+@media (max-width: 600px) {
+  .payment-modal-backdrop {
+    padding: 14px;
+  }
+
+  .payment-modal-card {
+    padding: 20px;
+  }
+
+  .payment-modal-content {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .payment-modal-product .book-details-cover {
+    flex-basis: 88px;
+    width: 88px;
+  }
+}

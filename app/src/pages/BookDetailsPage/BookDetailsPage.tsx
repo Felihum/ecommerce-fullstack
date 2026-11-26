@@ -4,6 +4,7 @@ import DiscountBadge from '../../components/DiscountBadge/DiscountBadge';
 import BookInfoHeader from '../../components/BookInfoHeader/BookInfoHeader';
 import BookSynopsis from '../../components/BookSynopsis/BookSynopsis';
 import BookPurchaseActions from '../../components/BookPurchaseActions/BookPurchaseActions';
+import PayamentModal from '../../components/PayamentModal/PayamentModal';
 import './BookDetailsPage.css';
 
 type BookDetailsPageProps = {
@@ -75,6 +76,7 @@ function BookDetailsPage({
   const [apiBook, setApiBook] = useState<BookDetails | null>(null);
   const [isLoading, setIsLoading] = useState(!book);
   const [loadError, setLoadError] = useState('');
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   useEffect(() => {
     if (book) {
@@ -192,11 +194,17 @@ function BookDetailsPage({
           <BookSynopsis description={displayedBook.description} />
 
           <BookPurchaseActions
-            onBuy={() => onBuy?.(displayedBook)}
+            onBuy={() => setIsPaymentOpen(true)}
             onAddToCart={() => onAddToCart?.(displayedBook)}
           />
         </section>
       </article>
+      <PayamentModal
+        isOpen={isPaymentOpen}
+        book={displayedBook}
+        onClose={() => setIsPaymentOpen(false)}
+        onPay={() => onBuy?.(displayedBook)}
+      />
     </main>
   );
 }
