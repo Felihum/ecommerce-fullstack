@@ -5,6 +5,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { ULID } from "@shared/domain/value-objects/ulid.vo";
 import { UserRepositoryInterface } from "@modules/auth/domain/contracts/user.repository.interface";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CPF } from "@shared/domain/value-objects/cpf.vo";
+import { Email } from "@shared/domain/value-objects/email.vo";
 
 @Entity("users")
 @Unique(["cpf"])
@@ -25,14 +27,11 @@ export class UserEntity {
   @Column({ type: "varchar", length: 255 })
   password: string;
 
-  @Column({ type: "date" })
-  birthday: Date;
-
   @ManyToOne(() => AddressEntity, {
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({ name: "address_id" })
-  address: AddressEntity;
+  address: AddressEntity | null;
 }
 
 
@@ -106,14 +105,16 @@ export class UserTypeormRepository implements UserRepositoryInterface {
   }
 
   private toDomain(entity: UserEntity): User {
-    return User.create(
-      entity.cpf,
+    const domainUser = new User(
+      CPF.create(entity.cpf),
       entity.name,
-      entity.email,
+      Email.create(entity.email),
       entity.password,
-      entity.birthday,
-      entity.address.id,
+      ULID.from(entity.id),
+      entity.address ? ULID.from(entity.address.id) : undefined,
     )
+
+    return domainUser
   }
 
   private toPersistence(user: User): UserEntity {
@@ -124,7 +125,6 @@ export class UserTypeormRepository implements UserRepositoryInterface {
     entity.name = user.name;
     entity.email = user.email.toString();
     entity.password = user.password;
-    entity.birthday = user.birthday;
 
     // Adicione aqui a conversão de Address para AddressEntity
 

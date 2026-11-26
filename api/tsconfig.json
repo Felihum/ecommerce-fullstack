@@ -19,11 +19,20 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src"
+    ],
     "paths": {
       "@infrastructure/*": ["./src/infrastructure/*"],
       "@modules/*": ["./src/modules/*"],
       "@packages/*": ["./src/packages/*"],
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/shared/*"],
+      "@config/*": ["./src/config/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ]
 }

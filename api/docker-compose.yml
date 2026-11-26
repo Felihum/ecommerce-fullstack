@@ -1,7 +1,5 @@
 services:
-  # ==========================================
-  # Serviço do PostgreSQL
-  # ==========================================
+
   postgres:
     image: postgres:16-alpine
     container_name: ecommerce-db
@@ -11,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -20,9 +18,26 @@ services:
       timeout: 5s
       retries: 5
 
-  # ==========================================
-  # Serviço responsável pelas migrations
-  # ==========================================
+  ecommerce-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: ["node", "dist/applications/worker/main.js"]
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   ecommerce-migrations:
     build:
       context: .
@@ -34,21 +49,21 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     command: ["pnpm", "migration:run"]
     depends_on:
       postgres:
         condition: service_healthy
     restart: "no"
 
-  # ==========================================
-  # Serviço da API (NestJS)
-  # ==========================================
   ecommerce-api:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: ecommerce-api
     restart: always
+    command: ["node", "dist/applications/api/main.js"]
     ports:
       - "3001:3001"
     environment:

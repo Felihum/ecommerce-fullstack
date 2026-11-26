@@ -6,6 +6,7 @@ import { ULID } from "@shared/domain/value-objects/ulid.vo";
 import { Session } from "@modules/auth/domain/models/session.entity";
 import { TypeOrmTransactionContext } from "@infrastructure/database/typeorm/typeorm-transaction-context";
 import { Injectable } from "@nestjs/common";
+import { TransactionContextInterface } from "@infrastructure/database/contracts/transaction-context.interface";
 
 @Entity("sessions")
 export class SessionEntity {
@@ -23,15 +24,13 @@ export class SessionEntity {
 
     @Column({
         type: "varchar",
-        nullable: true,
     })
-    refreshTokenHash: string | null;
+    refreshTokenHash: string;
 
     @Column({
         type: "timestamp",
-        nullable: true,
     })
-    expiresAt: Date | null;
+    expiresAt: Date;
 
     @Column({
         type: "timestamp",
@@ -69,7 +68,15 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
     }
 
     private toDomain(entity: SessionEntity): Session {
-        return Session.create(entity.user.id);
+        return new Session(
+            ULID.from(entity.user.id),
+            entity.refreshTokenHash,
+            entity.expiresAt,
+            ULID.from(entity.id),
+            entity.revokedAt ?? undefined,
+            entity.createdAt,
+            entity.updatedAt
+        );
     }
 
     private toPersistence(session: Session): SessionEntity {
@@ -77,7 +84,7 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
             id: session.id.toString(),
             user: {
                 id: session.userId.toString(),
-            } as any,
+            } as UserEntity,
             refreshTokenHash: session.refreshTokenHash,
             expiresAt: session.expiresAt,
             revokedAt: session.revokedAt,
@@ -97,6 +104,40 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
         });
 
         return entity ? this.toDomain(entity) : null;
+    }
+
+    async findByUserId(userId: ULID, context?: TypeOrmTransactionContext): Promise<Session | null> {
+        const entity = await this.repository.findOne({
+            where: {
+                user: {
+                    id: userId.toString()
+                },
+            },
+            relations: {
+                user: true,
+            },
+        });
+
+        return entity ? this.toDomain(entity) : null;
+    }
+
+    async findByUserIdForUpdate(
+        userId: ULID,
+        context?: TypeOrmTransactionContext,
+    ): Promise<Session[]> {
+        const manager = this.getRepository(context)
+
+        
+        const entities = await manager
+            .createQueryBuilder('session')
+            .innerJoinAndSelect('session.user', 'user')
+            .setLock('pessimistic_write')
+            .where('user.id = :userId', {
+                userId: userId.toString(),
+            })
+            .getMany();
+
+        return entities.map(entity => this.toDomain(entity));
     }
 
     async findByRefreshToken(token: string): Promise<Session | null> {
@@ -121,6 +162,53 @@ export class SessionTypeOrmRepository implements SessionRepositoryInterface{
         const entity = repository.create({ ...this.toPersistence(session) });
 
         const savedEntity = await repository.save(entity);
+
+        return this.toDomain(savedEntity);
+    }
+    async patch(
+        session: Session,
+        context?: TypeOrmTransactionContext
+    ): Promise<Session> {
+        const repository = this.getRepository(context);
+
+        const existingSession = await repository.findOne({
+            where: {
+                user: {
+                    id: session.userId.toString(),
+                },
+            },
+        });
+
+        const entity = this.toPersistence(session);
+
+        if (existingSession) {
+            await repository.update(
+                { id: existingSession.id },
+                {
+                    id: entity.id,
+                    refreshTokenHash: entity.refreshTokenHash,
+                    expiresAt: entity.expiresAt,
+                    revokedAt: entity.revokedAt,
+                    createdAt: entity.createdAt,
+                    updatedAt: entity.updatedAt,
+                }
+            );
+        } else {
+            await repository.insert(entity);
+        }
+
+        const savedEntity = await repository.findOne({
+            where: {
+                id: session.id.toString(),
+            },
+            relations: {
+                user: true,
+            },
+        });
+
+        if (!savedEntity) {
+            throw new Error("Failed to persist session.");
+        }
 
         return this.toDomain(savedEntity);
     }

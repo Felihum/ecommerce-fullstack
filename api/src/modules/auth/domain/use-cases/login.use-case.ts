@@ -2,7 +2,6 @@ import { Email } from "@shared/domain/value-objects/email.vo";
 import { UserRepositoryInterface } from "../contracts/user.repository.interface";
 import { IncorrectCredentialsException } from "../exceptions/incorrect-credentials.exception";
 import { PasswordHasherInterface } from "../contracts/password.hasher.interface";
-import { User } from "../models/auth.entity";
 import { TokenProviderInterface } from "../contracts/token.provider.interface";
 import { SessionRepositoryInterface } from "../contracts/session.repository.interface";
 import { Session } from "../models/session.entity";
@@ -36,35 +35,26 @@ export class LoginUseCase{
             throw new IncorrectCredentialsException();
         }
 
-        if(await !this.passwordHasher.compare(input.password, user.password)){
+        const passwordMatch = await this.passwordHasher.compare(input.password, user.password)
+
+        if(!passwordMatch){
             throw new IncorrectCredentialsException();
         }
 
-        return this.unitOfWork.execute(async (context) => {
-            const session = Session.create(user.id.toString());
-            const storedSession = await this.sessionRepository.insert(session, context);
+        const accessToken = await this.tokenProvider.generateAccessToken({ userId: user.id.toString() });
+        const refreshToken = await this.tokenProvider.generateRefreshToken({ userId: user.id.toString() });
 
-            const accessToken = await this.tokenProvider.generateAccessToken({ 
-                sub: user.id.toString(), 
-                sessionId: storedSession.id.toString(),
-            });
+        const session = new Session(
+            user.id, 
+            this.tokenHasher.encrypt(refreshToken.value), 
+            new Date(Date.now() + refreshToken.duration)
+        );
 
-            const refreshToken = await this.tokenProvider.generateRefreshToken({ 
-                sub: user.id.toString(), 
-                sessionId: storedSession.id.toString(),
-            });
+        await this.sessionRepository.patch(session);
 
-            storedSession.update(
-                this.tokenHasher.encrypt(refreshToken.value), 
-                new Date(Date.now() + refreshToken.duration),
-            );
-
-            await this.sessionRepository.update(storedSession, context);
-
-            return {
-                accessToken: accessToken.value,
-                refreshToken: refreshToken.value
-            }
-        })
+        return {
+            accessToken: accessToken.value,
+            refreshToken: refreshToken.value
+        }
     }
 }

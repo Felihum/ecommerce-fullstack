@@ -1,5 +1,5 @@
 
-import { TokenPayload, TokenProviderInterface, TokenResponse } from "@modules/auth/domain/contracts/token.provider.interface";
+import { ACCESS_TOKEN_EXPIRATION_MS, REFRESH_TOKEN_EXPIRATION_MS, TokenPayload, TokenProviderInterface, TokenResponse } from "@modules/auth/domain/contracts/token.provider.interface";
 import { SignJWT, jwtVerify } from "jose";
 import { EnvSchema } from "../../../config/env.schema";
 
@@ -9,9 +9,6 @@ export class JwtTokenProvider implements TokenProviderInterface {
 
   private readonly issuer = "my-application";
   private readonly audience = "my-application-users";
-
-  private readonly accessDuration = 900;
-  private readonly refreshDuration = 604800;
 
   constructor() {
     if (EnvSchema.JWT_ACCESS_SECRET.length < 32 || EnvSchema.JWT_REFRESH_SECRET.length < 32) {
@@ -26,20 +23,20 @@ export class JwtTokenProvider implements TokenProviderInterface {
     payload: TokenPayload,
   ): Promise<TokenResponse> {
     const value = await new SignJWT({
-      sessionId: payload.sessionId,
+      userId: payload.userId,
       tokenType: "access",
     })
       .setProtectedHeader({ alg: "HS256" })
-      .setSubject(payload.sub)
+      .setSubject(payload.userId)
       .setIssuer(this.issuer)
       .setAudience(this.audience)
       .setIssuedAt()
-      .setExpirationTime(`${this.accessDuration}s`)
+      .setExpirationTime(`${ACCESS_TOKEN_EXPIRATION_MS}s`)
       .sign(this.accessSecret);
 
     return {
       value,
-      duration: this.accessDuration,
+      duration: ACCESS_TOKEN_EXPIRATION_MS,
     };
   }
 
@@ -55,20 +52,20 @@ export class JwtTokenProvider implements TokenProviderInterface {
     payload: TokenPayload,
   ): Promise<TokenResponse> {
     const value = await new SignJWT({
-      sessionId: payload.sessionId,
+      userId: payload.userId,
       tokenType: "refresh",
     })
       .setProtectedHeader({ alg: "HS256" })
-      .setSubject(payload.sub)
+      .setSubject(payload.userId)
       .setIssuer(this.issuer)
       .setAudience(this.audience)
       .setIssuedAt()
-      .setExpirationTime(`${this.refreshDuration}s`)
+      .setExpirationTime(`${REFRESH_TOKEN_EXPIRATION_MS}s`)
       .sign(this.refreshSecret);
 
     return {
       value,
-      duration: this.refreshDuration,
+      duration: REFRESH_TOKEN_EXPIRATION_MS,
     };
   }
 
@@ -93,15 +90,13 @@ export class JwtTokenProvider implements TokenProviderInterface {
 
     if (
       typeof payload.sub !== "string" ||
-      typeof payload.sessionId !== "string" ||
       payload.tokenType !== expectedType
     ) {
       throw new Error("Invalid token payload.");
     }
 
     return {
-      sub: payload.sub,
-      sessionId: payload.sessionId,
+      userId: payload.sub,
     };
   }
 }
