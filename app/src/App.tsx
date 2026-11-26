@@ -4,14 +4,16 @@ import AuthModal from './components/AuthModal';
 import Home from './pages/Home';
 import Footer from './components/Footer';
 import BookDetailsPage from './pages/BookDetailsPage/BookDetailsPage';
+import { getPaymentDemoBook } from './dev/paymentDemo';
 
 function App() {
   const [authOpen, setAuthOpen] = useState(false);
+  const paymentDemoBook = getPaymentDemoBook();
 
   return (
     <>
       <Navbar onOpenAuth={() => setAuthOpen(true)} />
-      <BookDetailsPage />
+      <BookDetailsPage book={paymentDemoBook} />
       <Footer />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
