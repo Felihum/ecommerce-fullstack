@@ -1,25 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Navbar from './components/Navbar';
+import AuthModal from './components/AuthModal';
+import Home from './pages/Home';
+import Footer from './components/Footer';
+import BookDetailsPage from './pages/BookDetailsPage/BookDetailsPage';
 
 function App() {
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar onOpenAuth={() => setAuthOpen(true)} />
+      <BookDetailsPage />
+      <Footer />
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+    </>
   );
 }
 

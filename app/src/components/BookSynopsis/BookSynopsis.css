@@ -1,0 +1,16 @@
+.book-details-synopsis {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.book-details-synopsis h2 {
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.book-details-synopsis p {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
