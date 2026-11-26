@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from '../api/api';
 import './AuthModal.css';
 
 type AuthModalProps = {
@@ -7,8 +8,6 @@ type AuthModalProps = {
 };
 
 type AuthMode = 'login' | 'register';
-
-const API_URL = 'http://localhost:3001';
 
 function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<AuthMode>('login');
@@ -33,7 +32,7 @@ function AuthModal({ isOpen, onClose }: AuthModalProps) {
         : { cpf, email, name, password };
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(apiUrl(endpoint), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -58,7 +57,7 @@ function AuthModal({ isOpen, onClose }: AuthModalProps) {
       );
       onClose();
     } catch {
-      setFeedback('Erro ao conectar com a API em localhost:3001. Verifique se ela está rodando.');
+      setFeedback('Erro ao conectar com a API. Verifique se ela está rodando.');
     } finally {
       setLoading(false);
     }

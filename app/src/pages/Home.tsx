@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../api/api';
 import BookCard, { type Book } from '../components/BookCard';
 import './Home.css';
-
-const API_URL = 'http://localhost:3001';
-const PRODUCTS_ENDPOINT = '/product';
 
 type ProductDict = {
   id?: string;
@@ -27,10 +26,10 @@ function mapProductToBook(raw: ProductDict, index: number): Book {
 }
 
 function Home() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -40,7 +39,7 @@ function Home() {
       setError('');
 
       try {
-        const response = await fetch(`${API_URL}${PRODUCTS_ENDPOINT}`);
+        const response = await fetch(apiUrl('/product'));
 
         if (!response.ok) {
           throw new Error('Falha ao carregar produtos da API.');
@@ -60,7 +59,7 @@ function Home() {
         }
       } catch {
         if (active) {
-          setError('Não foi possível carregar os livros da API em localhost:3001.');
+          setError('Não foi possível carregar os livros da API. Verifique se ela está ativa.');
         }
       } finally {
         if (active) {
@@ -103,22 +102,13 @@ function Home() {
               <BookCard
                 key={book.id}
                 book={book}
-                onSelect={(item) => setFeedback(`Visualizando detalhes de "${item.title}".`)}
-                onBuy={(item) => setFeedback(`"${item.title}" adicionado para compra.`)}
+                onSelect={(item) => navigate(`/books/${encodeURIComponent(item.id)}`)}
               />
             ))}
           </section>
         )}
       </section>
 
-      {feedback && (
-        <aside className="home-toast" aria-live="polite">
-          <p>{feedback}</p>
-          <button type="button" onClick={() => setFeedback('')}>
-            Fechar
-          </button>
-        </aside>
-      )}
     </main>
   );
 }

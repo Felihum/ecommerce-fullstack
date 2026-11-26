@@ -52,7 +52,7 @@ test('creates an order and keeps the modal open with the returned Pix details', 
   fireEvent.click(within(dialog).getByRole('button', { name: /Pagar R\$\s*80,00/ }));
 
   expect(await within(dialog).findByText('pix-copy-paste-code')).toBeInTheDocument();
-  expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/order', {
+  expect(fetchMock).toHaveBeenCalledWith('/order', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -4,8 +4,7 @@
   margin-top: auto;
 }
 
-.book-details-buy-button,
-.book-details-cart-button {
+.book-details-buy-button {
   min-height: 46px;
   padding: 12px 20px;
   border-radius: var(--radius-full);
@@ -24,18 +23,6 @@
 
 .book-details-buy-button:hover {
   background-color: var(--brand-hover);
-  border-color: var(--brand-hover);
-}
-
-.book-details-cart-button {
-  flex: 1;
-  border: 1px solid var(--brand-primary);
-  background-color: var(--bg-surface);
-  color: var(--brand-primary);
-}
-
-.book-details-cart-button:hover {
-  background-color: var(--bg-subtle);
   border-color: var(--brand-hover);
 }
 

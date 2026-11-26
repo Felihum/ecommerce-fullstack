@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiUrl } from '../../api/api';
 import BookCover, { type BookDetails } from '../BookCover/BookCover';
 import './PayamentModal.css';
 
@@ -14,8 +15,6 @@ type PayamentModalProps = {
   onClose: () => void;
   onPay: () => void;
 };
-
-const API_URL = 'http://localhost:3001';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -73,7 +72,7 @@ function PayamentModal({ isOpen, book, onClose, onPay }: PayamentModalProps) {
     setFeedback('');
 
     try {
-      const response = await fetch(`${API_URL}/order`, {
+      const response = await fetch(apiUrl('/order'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +101,7 @@ function PayamentModal({ isOpen, book, onClose, onPay }: PayamentModalProps) {
     } catch (error) {
       const reason = error instanceof Error ? ` ${error.message}` : '';
       setFeedback(
-        `Não foi possível conectar à API. Verifique se ela está ativa e se o CORS permite esta origem.${reason}`
+        `Não foi possível conectar à API. Verifique se ela está ativa.${reason}`
       );
     } finally {
       setIsSubmitting(false);

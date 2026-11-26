@@ -13,12 +13,11 @@ export type Book = {
 type BookCardProps = {
   book: Book;
   onSelect?: (book: Book) => void;
-  onBuy?: (book: Book) => void;
 };
 
-function BookCard({ book, onSelect, onBuy }: BookCardProps) {
+function BookCard({ book, onSelect }: BookCardProps) {
   return (
-    <article className="book-card" onClick={() => onSelect?.(book)}>
+    <article className="book-card">
       <figure className="book-cover">
         {book.coverUrl ? (
           <img src={book.coverUrl} alt={`Capa de ${book.title}`} />
@@ -40,10 +39,7 @@ function BookCard({ book, onSelect, onBuy }: BookCardProps) {
         <button
           type="button"
           className="book-buy-btn"
-          onClick={(event) => {
-            event.stopPropagation();
-            onBuy?.(book);
-          }}
+          onClick={() => onSelect?.(book)}
         >
           <svg
             width="16"

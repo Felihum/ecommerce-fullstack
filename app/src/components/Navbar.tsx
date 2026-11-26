@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import logo from '../logo.svg';
 import './Navbar.css';
 
@@ -13,9 +14,9 @@ function Navbar({ onOpenAuth }: NavbarProps) {
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <a href="/" className="navbar-brand" aria-label="Página inicial">
+        <Link to="/" className="navbar-brand" aria-label="Página inicial">
           <img src={logo} alt="Logo" className="navbar-logo" />
-        </a>
+        </Link>
 
         <div className="navbar-search">
           <input

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiUrl } from '../../api/api';
 import BookCover, { type BookDetails } from '../../components/BookCover/BookCover';
 import DiscountBadge from '../../components/DiscountBadge/DiscountBadge';
 import BookInfoHeader from '../../components/BookInfoHeader/BookInfoHeader';
@@ -9,11 +10,9 @@ import './BookDetailsPage.css';
 
 type BookDetailsPageProps = {
   book?: BookDetails;
+  bookId?: string;
   onBuy?: (book: BookDetails) => void;
-  onAddToCart?: (book: BookDetails) => void;
 };
-
-const API_URL = 'http://localhost:3001/product';
 
 /*
 const defaultBook: BookDetails = {
@@ -70,8 +69,8 @@ const formatPrice = (value: number) =>
 
 function BookDetailsPage({
   book,
+  bookId,
   onBuy,
-  onAddToCart,
 }: BookDetailsPageProps) {
   const [apiBook, setApiBook] = useState<BookDetails | null>(null);
   const [isLoading, setIsLoading] = useState(!book);
@@ -93,7 +92,7 @@ function BookDetailsPage({
       setApiBook(null);
 
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(apiUrl('/product'));
 
         if (!response.ok) {
           throw new Error(`A API respondeu com o status ${response.status}.`);
@@ -105,14 +104,20 @@ function BookDetailsPage({
           throw new Error('A API retornou uma lista de produtos em formato inválido.');
         }
 
-        if (active && data.length > 0) {
-          setApiBook(mapProductToBook(data[0]));
+        const product = bookId
+          ? data.find(
+              (item: unknown) => isRecord(item) && item.id === bookId,
+            )
+          : data[0];
+
+        if (active && product !== undefined) {
+          setApiBook(mapProductToBook(product));
         }
       } catch (error) {
         if (active) {
           const reason = error instanceof Error ? ` ${error.message}` : '';
           setLoadError(
-            `Não foi possível carregar os livros de localhost:3001. Verifique se a API está ativa e se o CORS permite esta origem.${reason}`
+            `Não foi possível carregar os livros da API. Verifique se ela está ativa.${reason}`
           );
         }
       } finally {
@@ -127,7 +132,7 @@ function BookDetailsPage({
     return () => {
       active = false;
     };
-  }, [book]);
+  }, [book, bookId]);
 
   const displayedBook = book ?? apiBook;
 
@@ -195,7 +200,6 @@ function BookDetailsPage({
 
           <BookPurchaseActions
             onBuy={() => setIsPaymentOpen(true)}
-            onAddToCart={() => onAddToCart?.(displayedBook)}
           />
         </section>
       </article>
