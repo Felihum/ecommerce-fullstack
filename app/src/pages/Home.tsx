@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../api/api';
+import BannerCta from '../components/BannerCta';
 import BookCard, { type Book } from '../components/BookCard';
 import './Home.css';
 
@@ -14,6 +15,10 @@ type ProductDict = {
   imageUrl?: string | null;
 };
 
+type HomeProps = {
+  onOpenAuth?: () => void;
+};
+
 function mapProductToBook(raw: ProductDict, index: number): Book {
   return {
     id: String(raw.id ?? index + 1),
@@ -25,7 +30,7 @@ function mapProductToBook(raw: ProductDict, index: number): Book {
   };
 }
 
-function Home() {
+function Home({ onOpenAuth }: HomeProps) {
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +82,8 @@ function Home() {
 
   return (
     <main className="home-page">
+      <BannerCta onActionClick={onOpenAuth} />
+
       <section className="featured-section" aria-labelledby="featured-heading">
         <header className="section-header">
           <h1 id="featured-heading" className="section-title">
@@ -108,7 +115,6 @@ function Home() {
           </section>
         )}
       </section>
-
     </main>
   );
 }

@@ -6,16 +6,20 @@ import QuemSomos from '../pages/QuemSomos';
 import TermosDeUso from '../pages/TermosDeUso';
 import Privacidade from '../pages/Privacidade';
 
+type AppRoutesProps = {
+  onOpenAuth?: () => void;
+};
+
 function BookDetailsRoute() {
   const { id } = useParams<{ id: string }>();
 
   return <BookDetailsPage bookId={id} />;
 }
 
-function AppRoutes() {
+function AppRoutes({ onOpenAuth }: AppRoutesProps) {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Home onOpenAuth={onOpenAuth} />} />
       <Route path="/books/:id" element={<BookDetailsRoute />} />
       <Route path="/quem-somos" element={<QuemSomos />} />
       <Route path="/termos" element={<TermosDeUso />} />
