@@ -15,6 +15,11 @@ const envSchema = z.object({
 
     JWT_ACCESS_SECRET: z.string().min(1),
     JWT_REFRESH_SECRET: z.string().min(1),
+
+    S3_REGION: z.string().min(1),
+    S3_ENDPOINT: z.string().min(1),
+    S3_ACCESS_KEY_ID: z.string().min(1),
+    S3_SECRET_ACCESS_KEY: z.string().min(1)
 });
 
 export const EnvSchema = envSchema.parse(process.env);

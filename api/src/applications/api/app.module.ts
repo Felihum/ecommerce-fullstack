@@ -6,6 +6,7 @@ import { OrderModule } from '@modules/order/order.module';
 import { PaymentModule } from '@modules/payment/payment.module';
 import { PurchaseModule } from '@modules/purchase/purchase.module';
 import { IdempotencyModule } from '@infrastructure/idempotency/idempotency.module';
+import { S3StorageModule } from '@infrastructure/storage/storage.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { IdempotencyModule } from '@infrastructure/idempotency/idempotency.modul
     ProductModule,
     PurchaseModule,
     IdempotencyModule,
+    S3StorageModule,
   ],
 })
 export class AppModule {}
