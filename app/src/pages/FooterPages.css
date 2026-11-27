@@ -1,0 +1,22 @@
+.institutional-page {
+  max-width: 820px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+  color: var(--text-primary, #1f2937);
+}
+
+.institutional-page h1 {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+}
+
+.institutional-page h2 {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.15rem;
+}
+
+.institutional-page p {
+  line-height: 1.65;
+  margin: 0 0 1rem;
+  color: var(--text-secondary, #4b5563);
+}

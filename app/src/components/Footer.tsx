@@ -1,17 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 function Footer() {
   return (
     <footer className="site-footer">
       <section className="footer-content" aria-label="Informações do rodapé">
-        <p className="footer-brand">Livraria Digital</p>
+        <p className="footer-brand">Ornitolivros</p>
 
         <nav className="footer-nav" aria-label="Navegação do rodapé">
           <ul className="footer-list">
-            <li><a href="#quem-somos">Quem somos</a></li>
-            <li><a href="#termos">Termos de uso</a></li>
-            <li><a href="#privacidade">Privacidade</a></li>
+            <li>
+              <Link to="/quem-somos">Quem somos</Link>
+            </li>
+            <li>
+              <Link to="/termos">Termos de uso</Link>
+            </li>
+            <li>
+              <Link to="/privacidade">Privacidade</Link>
+            </li>
           </ul>
         </nav>
       </section>
