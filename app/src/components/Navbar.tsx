@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import logo from '../logo.png';
 import './Navbar.css';
 
@@ -7,9 +7,48 @@ type NavbarProps = {
   onOpenAuth: () => void;
 };
 
+type ExploreTab = 'livros' | 'autores' | 'editoras';
+
 function Navbar({ onOpenAuth }: NavbarProps) {
-  const [search, setSearch] = useState('');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('q') ?? '');
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setSearch(searchParams.get('q') ?? '');
+  }, [searchParams]);
+
+  function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const currentTab = searchParams.get('tab');
+    const validTab: ExploreTab =
+      currentTab === 'autores' || currentTab === 'editoras'
+        ? currentTab
+        : 'livros';
+
+    const params = new URLSearchParams({ tab: validTab });
+    const trimmed = search.trim();
+
+    if (trimmed) {
+      params.set('q', trimmed);
+    }
+
+    setMenuOpen(false);
+    navigate(`/explorar?${params.toString()}`);
+  }
+
+  function handleSelectCategory(tab: ExploreTab) {
+    const params = new URLSearchParams({ tab });
+    const trimmed = search.trim();
+
+    if (trimmed) {
+      params.set('q', trimmed);
+    }
+
+    setMenuOpen(false);
+    navigate(`/explorar?${params.toString()}`);
+  }
 
   return (
     <header className="navbar">
@@ -18,7 +57,7 @@ function Navbar({ onOpenAuth }: NavbarProps) {
           <img src={logo} alt="Logo" className="navbar-logo" />
         </Link>
 
-        <div className="navbar-search">
+        <form className="navbar-search" onSubmit={handleSearchSubmit}>
           <input
             type="text"
             value={search}
@@ -26,7 +65,7 @@ function Navbar({ onOpenAuth }: NavbarProps) {
             placeholder="Buscar título ou autor..."
             aria-label="Buscar livros"
           />
-        </div>
+        </form>
       </div>
 
       <div className="navbar-actions">
@@ -56,13 +95,25 @@ function Navbar({ onOpenAuth }: NavbarProps) {
 
           {menuOpen && (
             <div className="explore-dropdown">
-              <button type="button" className="dropdown-item">
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleSelectCategory('livros')}
+              >
                 Livros
               </button>
-              <button type="button" className="dropdown-item">
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleSelectCategory('autores')}
+              >
                 Autores
               </button>
-              <button type="button" className="dropdown-item">
+              <button
+                type="button"
+                className="dropdown-item"
+                onClick={() => handleSelectCategory('editoras')}
+              >
                 Editoras
               </button>
             </div>
